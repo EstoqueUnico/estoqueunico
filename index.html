@@ -7,262 +7,161 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
-/* ── RESET & TOKENS ──────────────────────────────────────── */
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-:root {
-  --bg:        #f2f3f7;
-  --surface:   #ffffff;
-  --surface2:  #e9eaef;
-  --border:    #d0d4de;
-  --border2:   #a8afc4;
-  --text:      #0d1021;
-  --text2:     #3d4563;
-  --text3:     #7e88a6;
-  --blue:      #1a49d6;
-  --blue2:     #1239b0;
-  --blue-bg:   #dde8ff;
-  --blue-bd:   #93aef7;
-  --green:     #0c6b30;
-  --green-bg:  #c6f4d8;
-  --green-bd:  #5ed693;
-  --amber:     #8a3d00;
-  --amber-bg:  #fde8c0;
-  --amber-bd:  #f5a623;
-  --red:       #a61616;
-  --red-bg:    #fdd0d0;
-  --red-bd:    #f07070;
-  --r:         8px;
-  --r2:        14px;
-  --shadow:    0 1px 3px rgba(0,0,0,.08), 0 4px 16px rgba(0,0,0,.05);
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#f2f3f7;--surface:#fff;--surface2:#e9eaef;--border:#d0d4de;--border2:#a8afc4;
+  --text:#0d1021;--text2:#3d4563;--text3:#7e88a6;
+  --blue:#1a49d6;--blue2:#1239b0;--blue-bg:#dde8ff;--blue-bd:#93aef7;
+  --green:#0c6b30;--green-bg:#c6f4d8;--green-bd:#5ed693;
+  --amber:#8a3d00;--amber-bg:#fde8c0;--amber-bd:#f5a623;
+  --red:#a61616;--red-bg:#fdd0d0;--red-bd:#f07070;
+  --purple:#5b21b6;--purple-bg:#ede9fe;--purple-bd:#a78bfa;
+  --r:8px;--r2:14px;--shadow:0 1px 3px rgba(0,0,0,.08),0 4px 16px rgba(0,0,0,.05);
 }
+html{font-size:15px}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased}
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:99px}
 
-html { font-size: 15px; }
-body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; -webkit-font-smoothing: antialiased; }
+/* LOGIN */
+#screen-login{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:1.5rem;background:linear-gradient(135deg,#eef1fb,#f5f3ff)}
+.login-wrap{width:100%;max-width:380px;background:var(--surface);border-radius:var(--r2);border:1px solid var(--border);box-shadow:var(--shadow);padding:2.5rem 2rem 2rem}
+.login-eyebrow{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:3px;color:var(--blue);text-transform:uppercase;margin-bottom:6px}
+.login-title{font-size:1.5rem;font-weight:600;margin-bottom:1.75rem}
+.form-field{margin-bottom:1rem}
+.form-field label{display:block;font-size:11px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;color:var(--text2);margin-bottom:5px}
+.form-field input{width:100%;padding:10px 13px;background:var(--surface2);border:1.5px solid var(--border);border-radius:var(--r);font-family:inherit;font-size:14px;color:var(--text);transition:border-color .15s,box-shadow .15s}
+.form-field input:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px var(--blue-bg)}
+.btn-login{width:100%;margin-top:.25rem;padding:11px;background:var(--blue);color:#fff;border:none;border-radius:var(--r);font-family:inherit;font-size:14px;font-weight:600;cursor:pointer;transition:background .15s}
+.btn-login:hover{background:var(--blue2)}
+.login-err{color:var(--red);font-size:12.5px;margin-top:.6rem;display:none}
 
-/* ── DESKTOP LAYOUT ───────────────────────────────────────── */
-.appbar { padding: 0 2rem; height: 56px; }
-.tabbar { padding: 0 2rem; }
-.tab-btn { padding: 14px 22px; font-size: 14px; }
-.main { padding: 1.5rem 2rem; }
+/* PERFIL BADGE no login */
+.perfil-badge{display:inline-flex;align-items:center;padding:3px 10px;border-radius:99px;font-size:11px;font-weight:600;border:1px solid;margin-left:6px}
+.pb-vendedor{background:var(--blue-bg);color:var(--blue2);border-color:var(--blue-bd)}
+.pb-documentalista{background:var(--purple-bg);color:var(--purple);border-color:var(--purple-bd)}
+.pb-administrador{background:var(--amber-bg);color:var(--amber);border-color:var(--amber-bd)}
 
-/* ── SCROLLBAR ───────────────────────────────────────────── */
-::-webkit-scrollbar { width: 6px; height: 6px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 99px; }
-
-/* ── LOGIN ───────────────────────────────────────────────── */
-#screen-login {
-  min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 1.5rem;
-  background: linear-gradient(135deg, #eef1fb 0%, #f5f3ff 100%);
-}
-.login-wrap {
-  width: 100%; max-width: 380px;
-  background: var(--surface); border-radius: var(--r2);
-  border: 1px solid var(--border); box-shadow: var(--shadow);
-  padding: 2.5rem 2rem 2rem;
-}
-.login-eyebrow {
-  font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 3px;
-  color: var(--blue); text-transform: uppercase; margin-bottom: 6px;
-}
-.login-title { font-size: 1.5rem; font-weight: 600; margin-bottom: 1.75rem; color: var(--text); }
-.form-field { margin-bottom: 1rem; }
-.form-field label { display: block; font-size: 11px; font-weight: 600; letter-spacing: .5px; text-transform: uppercase; color: var(--text2); margin-bottom: 5px; }
-.form-field input {
-  width: 100%; padding: 10px 13px; background: var(--surface2); border: 1.5px solid var(--border);
-  border-radius: var(--r); font-family: inherit; font-size: 14px; color: var(--text);
-  transition: border-color .15s, box-shadow .15s;
-}
-.form-field input:focus { outline: none; border-color: var(--blue); box-shadow: 0 0 0 3px var(--blue-bg); }
-.btn-login {
-  width: 100%; margin-top: .25rem; padding: 11px; background: var(--blue); color: #fff;
-  border: none; border-radius: var(--r); font-family: inherit; font-size: 14px; font-weight: 600;
-  cursor: pointer; transition: background .15s, transform .1s;
-}
-.btn-login:hover { background: var(--blue2); }
-.btn-login:active { transform: scale(.98); }
-.login-err { color: var(--red); font-size: 12.5px; margin-top: .6rem; display: none; }
-
-/* ── APP SHELL ───────────────────────────────────────────── */
-#screen-app { display: none; flex-direction: column; min-height: 100vh; }
-
-/* HEADER */
-.appbar {
-  position: sticky; top: 0; z-index: 90;
-  background: var(--surface); border-bottom: 1px solid var(--border);
-  padding: 0 1.25rem; height: 52px;
-  display: flex; align-items: center; justify-content: space-between;
-  box-shadow: 0 1px 4px rgba(0,0,0,.06);
-}
-.appbar-brand { font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 2.5px; color: var(--blue); text-transform: uppercase; }
-.appbar-right { display: flex; align-items: center; gap: .6rem; }
-.chip-user { font-size: 12px; color: var(--text2); background: var(--surface2); border: 1px solid var(--border); border-radius: 99px; padding: 3px 11px; }
-.btn-sair { font-size: 12px; color: var(--text3); background: none; border: 1px solid var(--border); border-radius: var(--r); padding: 4px 11px; cursor: pointer; font-family: inherit; transition: border-color .15s, color .15s; }
-.btn-sair:hover { border-color: var(--red-bd); color: var(--red); }
+/* APP */
+#screen-app{display:none;flex-direction:column;min-height:100vh}
+.appbar{position:sticky;top:0;z-index:90;background:var(--surface);border-bottom:1px solid var(--border);padding:0 2rem;height:56px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 1px 4px rgba(0,0,0,.06)}
+.appbar-brand{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:2.5px;color:var(--blue);text-transform:uppercase}
+.appbar-right{display:flex;align-items:center;gap:.6rem}
+.chip-user{font-size:12px;color:var(--text2);background:var(--surface2);border:1px solid var(--border);border-radius:99px;padding:3px 11px}
+.btn-sair{font-size:12px;color:var(--text3);background:none;border:1px solid var(--border);border-radius:var(--r);padding:4px 11px;cursor:pointer;font-family:inherit;transition:border-color .15s,color .15s}
+.btn-sair:hover{border-color:var(--red-bd);color:var(--red)}
 
 /* TABS */
-.tabbar {
-  background: var(--surface); border-bottom: 1px solid var(--border);
-  display: flex; padding: 0 1.25rem; overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-}
-.tabbar::-webkit-scrollbar { display: none; }
-.tab-btn {
-  padding: 12px 16px; font-size: 13px; font-weight: 500; color: var(--text3);
-  cursor: pointer; border-bottom: 2.5px solid transparent; white-space: nowrap;
-  transition: color .15s; background: none; border-top: none; border-left: none; border-right: none;
-  font-family: inherit;
-}
-.tab-btn:hover { color: var(--text2); }
-.tab-btn.active { color: var(--blue); border-bottom-color: var(--blue); }
-.tab-pill {
-  display: inline-flex; align-items: center; justify-content: center;
-  min-width: 20px; padding: 1px 6px; margin-left: 5px;
-  background: var(--surface2); border-radius: 99px;
-  font-size: 10.5px; font-family: 'DM Mono', monospace; color: var(--text3);
-}
-.tab-btn.active .tab-pill { background: var(--blue-bg); color: var(--blue2); }
+.tabbar{background:var(--surface);border-bottom:1px solid var(--border);display:flex;padding:0 2rem;overflow-x:auto}
+.tabbar::-webkit-scrollbar{display:none}
+.tab-btn{padding:14px 22px;font-size:14px;font-weight:500;color:var(--text3);cursor:pointer;border-bottom:2.5px solid transparent;white-space:nowrap;transition:color .15s;background:none;border-top:none;border-left:none;border-right:none;font-family:inherit}
+.tab-btn:hover{color:var(--text2)}
+.tab-btn.active{color:var(--blue);border-bottom-color:var(--blue)}
+.tab-pill{display:inline-flex;align-items:center;justify-content:center;min-width:20px;padding:1px 6px;margin-left:5px;background:var(--surface2);border-radius:99px;font-size:10.5px;font-family:'DM Mono',monospace;color:var(--text3)}
+.tab-btn.active .tab-pill{background:var(--blue-bg);color:var(--blue2)}
 
 /* MAIN */
-.main { padding: 1.25rem; flex: 1; }
+.main{padding:1.5rem 2rem;flex:1}
 
 /* STATS */
-.stats-row { display: flex; gap: .5rem; flex-wrap: wrap; margin-bottom: 1rem; }
-.stat-card {
-  background: var(--surface); border: 1px solid var(--border); border-radius: var(--r);
-  padding: 8px 14px; font-size: 12px; color: var(--text2); font-family: 'DM Mono', monospace;
-}
-.stat-card b { font-size: 15px; font-weight: 600; margin-right: 4px; }
+.stats-row{display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:1rem}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:8px 14px;font-size:12px;color:var(--text2);font-family:'DM Mono',monospace}
+.stat-card b{font-size:15px;font-weight:600;margin-right:4px}
 
-/* FILTER BAR */
-.filterbar { display: flex; gap: .5rem; flex-wrap: nowrap; margin-bottom: 1rem; align-items: center; overflow-x: auto; padding-bottom: 2px; }
-.f-input, .f-select {
-  background: var(--surface); border: 1.5px solid var(--border); border-radius: var(--r);
-  padding: 7px 11px; font-family: inherit; font-size: 13px; color: var(--text);
-  transition: border-color .15s, box-shadow .15s;
-}
-.f-input { flex: 1; min-width: 180px; }
-.f-input:focus, .f-select:focus { outline: none; border-color: var(--blue); box-shadow: 0 0 0 3px var(--blue-bg); }
-.f-select { cursor: pointer; min-width: 130px; }
-.btn-refresh {
-  padding: 7px 12px; background: var(--surface); border: 1.5px solid var(--border);
-  border-radius: var(--r); font-family: inherit; font-size: 12px; color: var(--text2);
-  cursor: pointer; transition: border-color .15s, color .15s; white-space: nowrap;
-}
-.btn-refresh:hover { border-color: var(--blue); color: var(--blue); }
+/* FILTERBAR */
+.filterbar{display:flex;gap:.5rem;flex-wrap:nowrap;margin-bottom:1rem;align-items:center;overflow-x:auto;padding-bottom:2px}
+.f-input,.f-select{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--r);padding:7px 11px;font-family:inherit;font-size:13px;color:var(--text);transition:border-color .15s,box-shadow .15s}
+.f-input{flex:1;min-width:180px}
+.f-input:focus,.f-select:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px var(--blue-bg)}
+.f-select{cursor:pointer;min-width:130px}
+.btn-refresh{padding:7px 12px;background:var(--surface);border:1.5px solid var(--border);border-radius:var(--r);font-family:inherit;font-size:12px;color:var(--text2);cursor:pointer;transition:border-color .15s,color .15s;white-space:nowrap}
+.btn-refresh:hover{border-color:var(--blue);color:var(--blue)}
 
 /* TABLE */
-.table-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r2); overflow: hidden; box-shadow: var(--shadow); }
-.table-scroll { overflow-x: auto; }
-table { width: 100%; border-collapse: collapse; }
-thead th {
-  background: var(--surface2); padding: 10px 16px;
-  text-align: left; font-size: 10.5px; font-weight: 700;
-  color: var(--text2); letter-spacing: .7px; text-transform: uppercase;
-  border-bottom: 1px solid var(--border); white-space: nowrap;
-}
-tbody tr { border-bottom: 1px solid var(--border); transition: background .1s; }
-tbody tr:last-child { border-bottom: none; }
-tbody tr:hover { background: #f6f8ff; }
-td { padding: 11px 16px; font-size: 13.5px; vertical-align: middle; }
-.mono { font-family: 'DM Mono', monospace; font-size: 11.5px; color: var(--text2); }
+.table-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);overflow:hidden;box-shadow:var(--shadow)}
+.table-scroll{overflow-x:auto}
+table{width:100%;border-collapse:collapse}
+thead th{background:var(--surface2);padding:10px 16px;text-align:left;font-size:10.5px;font-weight:700;color:var(--text2);letter-spacing:.7px;text-transform:uppercase;border-bottom:1px solid var(--border);white-space:nowrap}
+tbody tr{border-bottom:1px solid var(--border);transition:background .1s}
+tbody tr:last-child{border-bottom:none}
+tbody tr:hover{background:#f6f8ff}
+td{padding:11px 16px;font-size:13.5px;vertical-align:middle}
+.mono{font-family:'DM Mono',monospace;font-size:11.5px;color:var(--text2)}
 
 /* BADGES */
-.badge { display: inline-flex; align-items: center; padding: 3px 9px; border-radius: 99px; font-size: 11px; font-weight: 600; border: 1px solid; white-space: nowrap; }
-.badge-disp  { background: var(--green-bg); color: var(--green); border-color: var(--green-bd); }
-.badge-res   { background: var(--amber-bg); color: var(--amber); border-color: var(--amber-bd); }
-.badge-vnd   { background: var(--red-bg);   color: var(--red);   border-color: var(--red-bd); }
+.badge{display:inline-flex;align-items:center;padding:3px 9px;border-radius:99px;font-size:11px;font-weight:600;border:1px solid;white-space:nowrap}
+.badge-disp{background:var(--green-bg);color:var(--green);border-color:var(--green-bd)}
+.badge-res{background:var(--amber-bg);color:var(--amber);border-color:var(--amber-bd)}
+.badge-vnd{background:var(--red-bg);color:var(--red);border-color:var(--red-bd)}
 
-/* ACTION BUTTONS */
-.acts { display: flex; gap: .35rem; flex-wrap: wrap; }
-.btn-r, .btn-v, .btn-ef, .btn-can, .btn-lock {
-  padding: 4px 10px; border-radius: 6px; font-size: 11.5px; font-weight: 500;
-  cursor: pointer; font-family: inherit; border: 1px solid; transition: opacity .15s;
-  white-space: nowrap;
-}
-.btn-r    { background: var(--amber-bg); color: var(--amber); border-color: var(--amber-bd); }
-.btn-v    { background: var(--green-bg); color: var(--green); border-color: var(--green-bd); }
-.btn-ef   { background: var(--blue);    color: #fff;         border-color: var(--blue2); }
-.btn-can  { background: var(--red-bg);  color: var(--red);   border-color: var(--red-bd); }
-.btn-lock { background: var(--surface2); color: var(--text3); border-color: var(--border); cursor: default; }
-.btn-r:hover, .btn-v:hover, .btn-ef:hover, .btn-can:hover { opacity: .75; }
+/* BUTTONS */
+.acts{display:flex;gap:.35rem;flex-wrap:wrap}
+.btn-r,.btn-v,.btn-ef,.btn-can,.btn-lock,.btn-admin{padding:4px 10px;border-radius:6px;font-size:11.5px;font-weight:500;cursor:pointer;font-family:inherit;border:1px solid;transition:opacity .15s;white-space:nowrap}
+.btn-r{background:var(--amber-bg);color:var(--amber);border-color:var(--amber-bd)}
+.btn-v{background:var(--green-bg);color:var(--green);border-color:var(--green-bd)}
+.btn-ef{background:var(--blue);color:#fff;border-color:var(--blue2)}
+.btn-can{background:var(--red-bg);color:var(--red);border-color:var(--red-bd)}
+.btn-admin{background:var(--amber-bg);color:var(--amber);border-color:var(--amber-bd)}
+.btn-lock{background:var(--surface2);color:var(--text3);border-color:var(--border);cursor:default}
+.btn-r:hover,.btn-v:hover,.btn-ef:hover,.btn-can:hover,.btn-admin:hover{opacity:.75}
 
 /* COUNTDOWN */
-.cdown {
-  display: inline-flex; align-items: center; justify-content: center;
-  font-family: 'DM Mono', monospace; font-size: 13px; font-weight: 500;
-  min-width: 64px; padding: 3px 10px; border-radius: 6px;
-  background: var(--amber-bg); color: var(--amber); border: 1px solid var(--amber-bd);
-}
-.cdown.urgent  { background: var(--red-bg); color: var(--red); border-color: var(--red-bd); }
-.cdown.expired { background: var(--surface2); color: var(--text3); border-color: var(--border); font-size: 11px; }
-
-/* EMPTY / LOADING */
-.placeholder { text-align: center; padding: 3.5rem 1rem; color: var(--text3); font-size: 13.5px; }
-.spinner { display: inline-block; width: 20px; height: 20px; border: 2px solid var(--border); border-top-color: var(--blue); border-radius: 50%; animation: spin .7s linear infinite; margin-bottom: .75rem; }
-@keyframes spin { to { transform: rotate(360deg); } }
+.cdown{display:inline-flex;align-items:center;justify-content:center;font-family:'DM Mono',monospace;font-size:13px;font-weight:500;min-width:64px;padding:3px 10px;border-radius:6px;background:var(--amber-bg);color:var(--amber);border:1px solid var(--amber-bd)}
+.cdown.urgent{background:var(--red-bg);color:var(--red);border-color:var(--red-bd)}
+.cdown.expired{background:var(--surface2);color:var(--text3);border-color:var(--border);font-size:11px}
 
 /* MODAL */
-.overlay {
-  position: fixed; inset: 0; background: rgba(10,15,40,.4);
-  display: none; align-items: center; justify-content: center;
-  z-index: 200; padding: 1rem; backdrop-filter: blur(2px);
-}
-.overlay.open { display: flex; }
-.modal {
-  background: var(--surface); border: 1px solid var(--border);
-  border-radius: var(--r2); padding: 1.75rem; width: 100%; max-width: 430px;
-  box-shadow: 0 16px 48px rgba(0,0,0,.15); animation: popIn .18s ease;
-}
-@keyframes popIn { from { transform: scale(.95); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-.modal-title { font-size: 15.5px; font-weight: 600; margin-bottom: 3px; }
-.modal-sub   { font-size: 12.5px; color: var(--text2); margin-bottom: 1.25rem; }
-.mfield { margin-bottom: .9rem; }
-.mfield label { display: block; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .4px; color: var(--text2); margin-bottom: 4px; }
-.mfield input, .mfield textarea {
-  width: 100%; padding: 9px 12px; background: var(--surface2); border: 1.5px solid var(--border);
-  border-radius: var(--r); font-family: inherit; font-size: 13px; color: var(--text);
-  transition: border-color .15s, box-shadow .15s;
-}
-.mfield input:focus, .mfield textarea:focus { outline: none; border-color: var(--blue); box-shadow: 0 0 0 3px var(--blue-bg); }
-.mfield input[readonly] { color: var(--text2); cursor: default; }
-.mfield textarea { resize: vertical; min-height: 72px; }
-.modal-actions { display: flex; gap: .6rem; margin-top: 1.25rem; }
-.btn-ok-res { flex: 1; padding: 10px; background: var(--amber-bg); border: 1.5px solid var(--amber-bd); color: var(--amber); border-radius: var(--r); font-family: inherit; font-size: 13px; font-weight: 600; cursor: pointer; transition: opacity .15s; }
-.btn-ok-res:hover { opacity: .75; }
-.btn-ok-vnd { flex: 1; padding: 10px; background: var(--blue); border: none; color: #fff; border-radius: var(--r); font-family: inherit; font-size: 13px; font-weight: 600; cursor: pointer; transition: background .15s; }
-.btn-ok-vnd:hover { background: var(--blue2); }
-.btn-cancel { padding: 10px 16px; background: none; border: 1.5px solid var(--border); color: var(--text2); border-radius: var(--r); font-family: inherit; font-size: 13px; cursor: pointer; transition: border-color .15s; }
-.btn-cancel:hover { border-color: var(--text2); }
+.overlay{position:fixed;inset:0;background:rgba(10,15,40,.4);display:none;align-items:center;justify-content:center;z-index:200;padding:1rem;backdrop-filter:blur(2px)}
+.overlay.open{display:flex}
+.modal{background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);padding:1.75rem;width:100%;max-width:440px;box-shadow:0 16px 48px rgba(0,0,0,.15);animation:popIn .18s ease}
+@keyframes popIn{from{transform:scale(.95);opacity:0}to{transform:scale(1);opacity:1}}
+.modal-title{font-size:15.5px;font-weight:600;margin-bottom:3px}
+.modal-sub{font-size:12.5px;color:var(--text2);margin-bottom:1.25rem}
+.mfield{margin-bottom:.9rem}
+.mfield label{display:block;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.4px;color:var(--text2);margin-bottom:4px}
+.mfield input,.mfield textarea{width:100%;padding:9px 12px;background:var(--surface2);border:1.5px solid var(--border);border-radius:var(--r);font-family:inherit;font-size:13px;color:var(--text);transition:border-color .15s,box-shadow .15s}
+.mfield input:focus,.mfield textarea:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px var(--blue-bg)}
+.mfield input[readonly]{color:var(--text2);cursor:default}
+.mfield textarea{resize:vertical;min-height:72px}
+.modal-actions{display:flex;gap:.6rem;margin-top:1.25rem}
+.btn-ok-res{flex:1;padding:10px;background:var(--amber-bg);border:1.5px solid var(--amber-bd);color:var(--amber);border-radius:var(--r);font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;transition:opacity .15s}
+.btn-ok-res:hover{opacity:.75}
+.btn-ok-vnd{flex:1;padding:10px;background:var(--blue);border:none;color:#fff;border-radius:var(--r);font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;transition:background .15s}
+.btn-ok-vnd:hover{background:var(--blue2)}
+.btn-ok-red{flex:1;padding:10px;background:var(--red-bg);border:1.5px solid var(--red-bd);color:var(--red);border-radius:var(--r);font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;transition:opacity .15s}
+.btn-ok-red:hover{opacity:.75}
+.btn-cancel{padding:10px 16px;background:none;border:1.5px solid var(--border);color:var(--text2);border-radius:var(--r);font-family:inherit;font-size:13px;cursor:pointer;transition:border-color .15s}
+.btn-cancel:hover{border-color:var(--text2)}
+
+/* PLACEHOLDER / LOADING */
+.placeholder{text-align:center;padding:3.5rem 1rem;color:var(--text3);font-size:13.5px}
+.spinner{display:inline-block;width:20px;height:20px;border:2px solid var(--border);border-top-color:var(--blue);border-radius:50%;animation:spin .7s linear infinite;margin-bottom:.75rem}
+@keyframes spin{to{transform:rotate(360deg)}}
 
 /* TOAST */
-.toast {
-  position: fixed; bottom: 1.25rem; right: 1.25rem; z-index: 300;
-  background: var(--surface); border: 1.5px solid var(--border);
-  border-radius: var(--r); padding: 11px 18px; font-size: 13px;
-  box-shadow: var(--shadow); display: none; max-width: 320px;
-}
-.toast.show { display: block; animation: slideUp .2s ease; }
-@keyframes slideUp { from { transform: translateY(8px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-.toast.ok  { border-color: var(--green-bd); color: var(--green); }
-.toast.err { border-color: var(--red-bd);   color: var(--red); }
+.toast{position:fixed;bottom:1.25rem;right:1.25rem;z-index:300;background:var(--surface);border:1.5px solid var(--border);border-radius:var(--r);padding:11px 18px;font-size:13px;box-shadow:var(--shadow);display:none;max-width:320px}
+.toast.show{display:block;animation:slideUp .2s ease}
+@keyframes slideUp{from{transform:translateY(8px);opacity:0}to{transform:translateY(0);opacity:1}}
+.toast.ok{border-color:var(--green-bd);color:var(--green)}
+.toast.err{border-color:var(--red-bd);color:var(--red)}
 
-/* RESPONSIVE */
-@media (max-width: 900px) {
-  .appbar { padding: 0 1rem; }
-  .tabbar { padding: 0 1rem; }
-  .main { padding: 1rem; }
-  .tab-btn { padding: 10px 14px; font-size: 13px; }
-  .filterbar { flex-wrap: wrap; }
-  td { padding: 9px 11px; font-size: 12.5px; }
-  .acts { gap: .25rem; }
+/* ACESSO NEGADO */
+.acesso-negado{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;color:var(--text3);padding:4px 10px;background:var(--surface2);border:1px solid var(--border);border-radius:6px}
+
+@media(max-width:900px){
+  .appbar,.tabbar{padding:0 1rem}
+  .main{padding:1rem}
+  .tab-btn{padding:10px 14px;font-size:13px}
+  .filterbar{flex-wrap:wrap}
+  td{padding:9px 11px;font-size:12.5px}
+  .acts{gap:.25rem}
 }
 </style>
 </head>
 <body>
 
-<!-- ══ LOGIN ═══════════════════════════════════════════ -->
+<!-- LOGIN -->
 <div id="screen-login">
   <div class="login-wrap">
     <div class="login-eyebrow">Gestão de Estoque</div>
@@ -280,26 +179,21 @@ td { padding: 11px 16px; font-size: 13.5px; vertical-align: middle; }
   </div>
 </div>
 
-<!-- ══ APP ══════════════════════════════════════════════ -->
+<!-- APP -->
 <div id="screen-app">
   <div class="appbar">
     <div class="appbar-brand">Estoque · Veículos</div>
     <div class="appbar-right">
       <div class="chip-user" id="chip-user">—</div>
+      <span id="chip-perfil"></span>
       <button class="btn-sair" onclick="doLogout()">Sair</button>
     </div>
   </div>
 
   <div class="tabbar">
-    <button class="tab-btn active" onclick="goTab('estoque')" id="tab-estoque">
-      Estoque <span class="tab-pill" id="n-estoque">0</span>
-    </button>
-    <button class="tab-btn" onclick="goTab('reservas')" id="tab-reservas">
-      Reservas <span class="tab-pill" id="n-reservas">0</span>
-    </button>
-    <button class="tab-btn" onclick="goTab('vendas')" id="tab-vendas">
-      Vendas <span class="tab-pill" id="n-vendas">0</span>
-    </button>
+    <button class="tab-btn active" onclick="goTab('estoque')"  id="tab-estoque">Estoque  <span class="tab-pill" id="n-estoque">0</span></button>
+    <button class="tab-btn"        onclick="goTab('reservas')" id="tab-reservas">Reservas <span class="tab-pill" id="n-reservas">0</span></button>
+    <button class="tab-btn"        onclick="goTab('vendas')"   id="tab-vendas">Vendas   <span class="tab-pill" id="n-vendas">0</span></button>
   </div>
 
   <div class="main">
@@ -307,12 +201,12 @@ td { padding: 11px 16px; font-size: 13.5px; vertical-align: middle; }
     <!-- ESTOQUE -->
     <div id="panel-estoque">
       <div class="filterbar">
-        <input class="f-input"   id="f-q"       placeholder="Buscar modelo, chassi, cor…" oninput="filterEstoque()">
-        <select class="f-select" id="f-marca"    onchange="filterEstoque()"><option value="">Todas as marcas</option></select>
-        <select class="f-select" id="f-familia"  onchange="filterEstoque()"><option value="">Todas as famílias</option></select>
-        <select class="f-select" id="f-modelo"   onchange="filterEstoque()"><option value="">Todos os modelos</option></select>
-        <select class="f-select" id="f-cor"      onchange="filterEstoque()"><option value="">Todas as cores</option></select>
-        <select class="f-select" id="f-status"   onchange="filterEstoque()">
+        <input class="f-input"   id="f-q"      placeholder="Buscar modelo, chassi, cor…" oninput="filterEstoque()">
+        <select class="f-select" id="f-marca"   onchange="filterEstoque()"><option value="">Todas as marcas</option></select>
+        <select class="f-select" id="f-familia" onchange="filterEstoque()"><option value="">Todas as famílias</option></select>
+        <select class="f-select" id="f-modelo"  onchange="filterEstoque()"><option value="">Todos os modelos</option></select>
+        <select class="f-select" id="f-cor"     onchange="filterEstoque()"><option value="">Todas as cores</option></select>
+        <select class="f-select" id="f-status"  onchange="filterEstoque()">
           <option value="disponivel">Disponíveis</option>
           <option value="">Todos</option>
           <option value="reservado">Reservados</option>
@@ -325,9 +219,9 @@ td { padding: 11px 16px; font-size: 13.5px; vertical-align: middle; }
         <div class="table-scroll">
           <table id="tbl-estoque" style="display:none">
             <thead><tr>
-              <th>Marca / Modelo</th><th>Família</th><th>Filial</th><th>Pátio</th>
-              <th>Cor Externa</th><th>Cor Interna</th><th>Fab/Mod</th><th>Chassi</th>
-              <th>Preço</th><th>Status</th><th>Ações</th>
+              <th>Marca / Família</th><th>Modelo</th><th>Pátio</th>
+              <th>Cor Externa</th><th>Cor Interna</th><th>Opcional</th>
+              <th>Fab/Mod</th><th>Chassi</th><th>Preço</th><th>Status</th><th>Ações</th>
             </tr></thead>
             <tbody id="body-estoque"></tbody>
           </table>
@@ -346,7 +240,7 @@ td { padding: 11px 16px; font-size: 13.5px; vertical-align: middle; }
         <div class="table-scroll">
           <table id="tbl-reservas" style="display:none">
             <thead><tr>
-              <th>Veículo</th><th>Chassi</th><th>Cliente</th><th>Vendedor</th>
+              <th>Veículo</th><th>Chassi</th><th>Cliente</th><th>Vendedor</th><th>Loja</th>
               <th>Reservado em</th><th>Tempo restante</th><th>Ações</th>
             </tr></thead>
             <tbody id="body-reservas"></tbody>
@@ -367,7 +261,7 @@ td { padding: 11px 16px; font-size: 13.5px; vertical-align: middle; }
           <table id="tbl-vendas" style="display:none">
             <thead><tr>
               <th>Veículo</th><th>Chassi</th><th>Cliente</th><th>Vendedor</th>
-              <th>Loja</th><th>Vendido em</th><th>Observação</th>
+              <th>Loja</th><th>Vendido em</th><th>Observação</th><th id="th-cancelar" style="display:none">Admin</th>
             </tr></thead>
             <tbody id="body-vendas"></tbody>
           </table>
@@ -384,8 +278,9 @@ td { padding: 11px 16px; font-size: 13.5px; vertical-align: middle; }
   <div class="modal">
     <div class="modal-title">Reservar veículo</div>
     <div class="modal-sub" id="ov-res-sub">—</div>
-    <div class="mfield"><label>Cliente *</label><input id="m-res-cli" placeholder="Nome completo"></div>
+    <div class="mfield"><label>Cliente *</label><input id="m-res-cli" placeholder="Nome completo do cliente"></div>
     <div class="mfield"><label>Vendedor</label><input id="m-res-vnd" readonly></div>
+    <div class="mfield"><label>Loja</label><input id="m-res-loja" readonly></div>
     <div class="modal-actions">
       <button class="btn-cancel" onclick="closeModal('ov-res')">Cancelar</button>
       <button class="btn-ok-res" onclick="doReserva()">⏱ Reservar por 1h</button>
@@ -398,9 +293,9 @@ td { padding: 11px 16px; font-size: 13.5px; vertical-align: middle; }
   <div class="modal">
     <div class="modal-title">Registrar venda</div>
     <div class="modal-sub" id="ov-vnd-sub">—</div>
-    <div class="mfield"><label>Cliente *</label><input id="m-vnd-cli" placeholder="Nome completo"></div>
+    <div class="mfield"><label>Cliente *</label><input id="m-vnd-cli" placeholder="Nome completo do cliente"></div>
     <div class="mfield"><label>Vendedor</label><input id="m-vnd-vnd" readonly></div>
-    <div class="mfield"><label>Loja *</label><input id="m-vnd-loja" placeholder="Nome da loja"></div>
+    <div class="mfield"><label>Loja</label><input id="m-vnd-loja" readonly></div>
     <div class="mfield"><label>Observação</label><textarea id="m-vnd-obs" placeholder="Detalhes adicionais…"></textarea></div>
     <div class="modal-actions">
       <button class="btn-cancel" onclick="closeModal('ov-vnd')">Cancelar</button>
@@ -409,457 +304,452 @@ td { padding: 11px 16px; font-size: 13.5px; vertical-align: middle; }
   </div>
 </div>
 
-<!-- TOAST -->
+<!-- MODAL CANCELAR VENDA (admin) -->
+<div class="overlay" id="ov-cancel-vnd">
+  <div class="modal">
+    <div class="modal-title">Cancelar venda</div>
+    <div class="modal-sub" id="ov-cancel-vnd-sub">—</div>
+    <div class="mfield">
+      <label>Justificativa *</label>
+      <textarea id="m-justificativa" placeholder="Descreva o motivo do cancelamento…"></textarea>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeModal('ov-cancel-vnd')">Voltar</button>
+      <button class="btn-ok-red" onclick="doCancelarVenda()">Cancelar venda</button>
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
-// ══════════════════════════════════════════════════════════
-//  ⚠️  CONFIGURE AQUI antes de publicar
 // ══════════════════════════════════════════════════════════
 const SUPABASE_URL = 'https://cjibxovkhoxkvcilgdyd.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNqaWJ4b3ZraG94a3ZjaWxnZHlkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgzNjI0MjYsImV4cCI6MjA5MzkzODQyNn0.dafIDdbF5HOeEl3pca34vcOnbbTecPEVPz4dUbIDicI';
 // ══════════════════════════════════════════════════════════
 
-// Tabelas no Supabase
 const T_ESTOQUE  = 'estoque';
 const T_RESERVAS = 'reservas';
 const T_VENDAS   = 'vendas';
 const T_USUARIOS = 'usuarios';
 
-const HORAS_RESERVA = 1;
-
-// ── API HELPER ────────────────────────────────────────────
-async function supa(method, table, body, params = '') {
-  const url = `${SUPABASE_URL}/rest/v1/${table}${params}`;
-  const res = await fetch(url, {
-    method,
-    headers: {
-      'apikey': SUPABASE_KEY,
-      'Authorization': 'Bearer ' + SUPABASE_KEY,
-      'Content-Type': 'application/json',
-      'Prefer': method === 'POST' ? 'return=representation' : 'return=minimal',
-    },
-    body: body ? JSON.stringify(body) : undefined,
-  });
-  if (!res.ok) {
-    const err = await res.json().catch(() => ({}));
-    throw new Error(err.message || res.statusText);
-  }
-  return method === 'DELETE' || res.status === 204 ? null : res.json();
-}
-
-const db = {
-  select: (table, params = '')    => supa('GET',    table, null, params),
-  insert: (table, body)           => supa('POST',   table, body),
-  update: (table, body, params)   => supa('PATCH',  table, body, params),
-  delete: (table, params)         => supa('DELETE', table, null, params),
-};
-
-// ── ESTADO ────────────────────────────────────────────────
-let me          = null;   // usuário logado { usuario, nome }
+// Perfis: vendedor | documentalista | administrador
+let me          = null;
 let estoqueAll  = [];
 let reservasAll = [];
 let vendasAll   = [];
-let sel         = null;   // linha selecionada para modal
+let sel         = null;
 let cdTimer     = null;
 
-// ── LOGIN ─────────────────────────────────────────────────
-async function doLogin() {
-  const u = v('l-user').trim();
-  const p = v('l-pass').trim();
-  if (!u || !p) { loginErr('Preencha usuário e senha.'); return; }
-  try {
-    const rows = await db.select(T_USUARIOS, `?usuario=eq.${encodeURIComponent(u)}&senha=eq.${encodeURIComponent(p)}&limit=1`);
-    if (!rows || rows.length === 0) { loginErr('Usuário ou senha incorretos.'); return; }
-    me = rows[0];
-    $('l-err').style.display = 'none';
-    $('screen-login').style.display = 'none';
-    $('screen-app').style.display   = 'flex';
-    $('chip-user').textContent = me.nome || me.usuario;
-    $('m-res-vnd').value = me.nome || me.usuario;
-    $('m-vnd-vnd').value = me.nome || me.usuario;
-    loadEstoque();
-  } catch(e) { loginErr('Erro de conexão: ' + e.message); }
+// ── API ───────────────────────────────────────────────────
+async function supa(method, table, body, params=''){
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/${table}${params}`,{
+    method,
+    headers:{
+      'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY,
+      'Content-Type':'application/json',
+      'Prefer':method==='POST'?'return=representation':'return=minimal',
+    },
+    body:body?JSON.stringify(body):undefined,
+  });
+  if(!res.ok){const e=await res.json().catch(()=>({}));throw new Error(e.message||res.statusText)}
+  return method==='DELETE'||res.status===204?null:res.json();
 }
-function loginErr(msg) { const el = $('l-err'); el.textContent = msg; el.style.display = 'block'; }
-$('l-pass').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
+const db={
+  select:(t,p='')=>supa('GET',t,null,p),
+  insert:(t,b)=>supa('POST',t,b),
+  update:(t,b,p)=>supa('PATCH',t,b,p),
+  delete:(t,p)=>supa('DELETE',t,null,p),
+};
+async function rpc(fn,args){
+  const res=await fetch(`${SUPABASE_URL}/rest/v1/rpc/${fn}`,{
+    method:'POST',
+    headers:{'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY,'Content-Type':'application/json'},
+    body:JSON.stringify(args),
+  });
+  if(!res.ok){const e=await res.json().catch(()=>({}));throw new Error(e.message||res.statusText)}
+  return res.json();
+}
 
-function doLogout() {
-  me = null; clearInterval(cdTimer);
-  estoqueAll = []; reservasAll = []; vendasAll = [];
-  $('screen-app').style.display   = 'none';
-  $('screen-login').style.display = 'flex';
-  $('l-user').value = ''; $('l-pass').value = '';
+// ── LOGIN ─────────────────────────────────────────────────
+async function doLogin(){
+  const u=v('l-user').trim(), p=v('l-pass').trim();
+  if(!u||!p){loginErr('Preencha usuário e senha.');return}
+  try{
+    const rows=await db.select(T_USUARIOS,`?usuario=eq.${encodeURIComponent(u)}&senha=eq.${encodeURIComponent(p)}&limit=1`);
+    if(!rows||!rows.length){loginErr('Usuário ou senha incorretos.');return}
+    me=rows[0];
+    me.perfil=me.perfil||'vendedor';
+    $('l-err').style.display='none';
+    $('screen-login').style.display='none';
+    $('screen-app').style.display='flex';
+    $('chip-user').textContent=me.nome||me.usuario;
+
+    // Badge de perfil
+    const pLabels={vendedor:'Vendedor',documentalista:'Documentalista',administrador:'Administrador'};
+    const pClass={vendedor:'pb-vendedor',documentalista:'pb-documentalista',administrador:'pb-administrador'};
+    $('chip-perfil').innerHTML=`<span class="perfil-badge ${pClass[me.perfil]||'pb-vendedor'}">${pLabels[me.perfil]||me.perfil}</span>`;
+
+    // Mostra coluna admin nas vendas
+    if(me.perfil==='administrador') $('th-cancelar').style.display='';
+
+    loadEstoque();
+  }catch(e){loginErr('Erro de conexão: '+e.message)}
+}
+function loginErr(msg){const el=$('l-err');el.textContent=msg;el.style.display='block'}
+$('l-pass').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin()});
+
+function doLogout(){
+  me=null;clearInterval(cdTimer);
+  estoqueAll=[];reservasAll=[];vendasAll=[];
+  $('screen-app').style.display='none';
+  $('screen-login').style.display='flex';
+  $('l-user').value='';$('l-pass').value='';
+  $('chip-perfil').innerHTML='';
+  $('th-cancelar').style.display='none';
 }
 
 // ── TABS ──────────────────────────────────────────────────
-function goTab(tab) {
-  ['estoque','reservas','vendas'].forEach(t => {
-    $('panel-' + t).style.display = t === tab ? 'block' : 'none';
-    $('tab-'   + t).classList.toggle('active', t === tab);
+function goTab(tab){
+  ['estoque','reservas','vendas'].forEach(t=>{
+    $('panel-'+t).style.display=t===tab?'block':'none';
+    $('tab-'+t).classList.toggle('active',t===tab);
   });
-  if (tab === 'reservas') loadReservas();
-  if (tab === 'vendas' && vendasAll.length === 0) loadVendas();
+  if(tab==='reservas')loadReservas();
+  if(tab==='vendas'&&!vendasAll.length)loadVendas();
 }
 
 // ── ESTOQUE ───────────────────────────────────────────────
-async function loadEstoque() {
+async function loadEstoque(){
   showPH('estoque');
-  try {
-    // Expira reservas vencidas antes de carregar
+  try{
     await expireReservas();
-    const rows = await db.select(T_ESTOQUE, '?order=marca,modelo');
-    estoqueAll = rows || [];
+    const rows=await db.select(T_ESTOQUE,'?order=marca,modelo');
+    estoqueAll=rows||[];
     populateFilters(estoqueAll);
     filterEstoque();
     updateCounts();
-  } catch(e) { toast('Erro ao carregar estoque: ' + e.message, 'err'); hidePH('estoque'); }
+  }catch(e){toast('Erro ao carregar estoque: '+e.message,'err');hidePH('estoque')}
 }
 
-function populateFilters(data) {
-  fill('f-marca',   [...new Set(data.map(r=>r.marca).filter(Boolean))].sort(),   'Todas as marcas');
-  fill('f-familia', [...new Set(data.map(r=>r.familia).filter(Boolean))].sort(), 'Todas as famílias');
-  fill('f-modelo',  [...new Set(data.map(r=>r.modelo).filter(Boolean))].sort(),  'Todos os modelos');
-  fill('f-cor',     [...new Set(data.map(r=>r.cor_externa).filter(Boolean))].sort(), 'Todas as cores');
+function populateFilters(data){
+  fill('f-marca',  data.map(r=>r.marca),   'Todas as marcas');
+  fill('f-familia',data.map(r=>r.familia), 'Todas as famílias');
+  fill('f-modelo', data.map(r=>r.modelo),  'Todos os modelos');
+  fill('f-cor',    data.map(r=>r.cor_externa),'Todas as cores');
 }
-
-function fill(id, list, placeholder) {
-  const sel = $(id), cur = sel.value;
-  sel.innerHTML = `<option value="">${placeholder}</option>`;
-  list.forEach(v => { const o = document.createElement('option'); o.value = v; o.textContent = v; sel.appendChild(o); });
-  if ([...sel.options].some(o => o.value === cur)) sel.value = cur;
-}
-
-function filterEstoque() {
-  const q  = $('f-q').value.toLowerCase();
-  const ma = $('f-marca').value, fa = $('f-familia').value;
-  const mo = $('f-modelo').value, co = $('f-cor').value;
-  const st = $('f-status').value;
-
-  const data = estoqueAll.filter(r => {
-    const haystack = [r.marca,r.modelo,r.familia,r.cor_externa,r.cor_interna,r.chassi,r.filial,r.patio].join(' ').toLowerCase();
-    return (!q  || haystack.includes(q))
-        && (!ma || r.marca      === ma)
-        && (!fa || r.familia    === fa)
-        && (!mo || r.modelo     === mo)
-        && (!co || r.cor_externa=== co)
-        && (!st || r.status     === st);
+function fill(id,list,ph){
+  const s=$(id),cur=s.value;
+  s.innerHTML=`<option value="">${ph}</option>`;
+  [...new Set(list.filter(Boolean))].sort().forEach(val=>{
+    const o=document.createElement('option');o.value=val;o.textContent=val;s.appendChild(o);
   });
-
-  renderEstoque(data);
-
-  const disp = estoqueAll.filter(r=>r.status==='disponivel').length;
-  const res  = estoqueAll.filter(r=>r.status==='reservado').length;
-  const vnd  = estoqueAll.filter(r=>r.status==='vendido').length;
-  $('stats-row').innerHTML =
-    `<div class="stat-card"><b>${estoqueAll.length}</b> total</div>` +
-    `<div class="stat-card" style="color:var(--green)"><b>${disp}</b> disponíveis</div>` +
-    `<div class="stat-card" style="color:var(--amber)"><b>${res}</b> reservados</div>` +
-    `<div class="stat-card" style="color:var(--red)"><b>${vnd}</b> vendidos</div>`;
+  if([...s.options].some(o=>o.value===cur))s.value=cur;
 }
 
-function renderEstoque(data) {
+function filterEstoque(){
+  const q=$('f-q').value.toLowerCase();
+  const ma=$('f-marca').value,fa=$('f-familia').value;
+  const mo=$('f-modelo').value,co=$('f-cor').value,st=$('f-status').value;
+  const data=estoqueAll.filter(r=>{
+    const hay=[r.marca,r.modelo,r.familia,r.cor_externa,r.cor_interna,r.chassi,r.filial,r.patio,r.opcional].join(' ').toLowerCase();
+    return(!q||hay.includes(q))&&(!ma||r.marca===ma)&&(!fa||r.familia===fa)
+      &&(!mo||r.modelo===mo)&&(!co||r.cor_externa===co)&&(!st||r.status===st);
+  });
+  renderEstoque(data);
+  const disp=estoqueAll.filter(r=>r.status==='disponivel').length;
+  const res =estoqueAll.filter(r=>r.status==='reservado').length;
+  const vnd =estoqueAll.filter(r=>r.status==='vendido').length;
+  $('stats-row').innerHTML=
+    `<div class="stat-card"><b>${estoqueAll.length}</b>total</div>`+
+    `<div class="stat-card" style="color:var(--green)"><b>${disp}</b>disponíveis</div>`+
+    `<div class="stat-card" style="color:var(--amber)"><b>${res}</b>reservados</div>`+
+    `<div class="stat-card" style="color:var(--red)"><b>${vnd}</b>vendidos</div>`;
+}
+
+function renderEstoque(data){
   hidePH('estoque');
-  const tbody = $('body-estoque');
-  tbody.innerHTML = '';
-
-  if (!data.length) {
-    $('tbl-estoque').style.display = 'none';
-    $('ph-estoque').innerHTML = 'Nenhum veículo encontrado.';
-    $('ph-estoque').style.display = 'block';
-    return;
+  const tbody=$('body-estoque');
+  tbody.innerHTML='';
+  if(!data.length){
+    $('tbl-estoque').style.display='none';
+    $('ph-estoque').innerHTML='Nenhum veículo encontrado.';
+    $('ph-estoque').style.display='block';return;
   }
-  $('tbl-estoque').style.display = '';
+  $('tbl-estoque').style.display='';
+  data.forEach(r=>{
+    const tr=document.createElement('tr');
+    const bc=r.status==='disponivel'?'badge-disp':r.status==='reservado'?'badge-res':'badge-vnd';
+    const bl=r.status==='disponivel'?'Disponível':r.status==='reservado'?'Reservado':'Vendido';
 
-  data.forEach(r => {
-    const tr = document.createElement('tr');
-    const bc = r.status === 'disponivel' ? 'badge-disp' : r.status === 'reservado' ? 'badge-res' : 'badge-vnd';
-    const bl = r.status === 'disponivel' ? 'Disponível' : r.status === 'reservado' ? 'Reservado' : 'Vendido';
-    let acts = '';
-    if (r.status === 'disponivel') {
-      acts = `<div class="acts">
-        <button class="btn-r" onclick="openRes('${r.id}','${esc(r.marca)} ${esc(r.modelo)}','${esc(r.chassi)}')">Reservar</button>
-        <button class="btn-v" onclick="openVnd('${r.id}','${esc(r.marca)} ${esc(r.modelo)}','${esc(r.chassi)}','')">Vender</button>
-      </div>`;
-    } else if (r.status === 'reservado') {
-      acts = `<span style="font-size:11px;color:var(--text3)">Em reserva</span>`;
+    let acts='';
+    const perfil=me?.perfil||'vendedor';
+
+    if(r.status==='disponivel'){
+      if(perfil==='vendedor'||perfil==='administrador'){
+        acts+=`<button class="btn-r" onclick="openRes('${r.id}','${esc(r.marca)} ${esc(r.familia)}','${esc(r.modelo)}','${esc(r.chassi)}')">Reservar</button>`;
+      }
+      if(perfil==='administrador'){
+        acts+=`<button class="btn-v" onclick="openVnd('${r.id}','${esc(r.marca)} ${esc(r.familia)}','${esc(r.modelo)}','${esc(r.chassi)}','','')">Vender</button>`;
+      }
+      if(perfil==='documentalista'){
+        acts=`<span class="acesso-negado">🔒 Sem permissão</span>`;
+      }
+    } else if(r.status==='reservado'){
+      acts=`<span style="font-size:11px;color:var(--text3)">Em reserva</span>`;
     }
-    const preco = r.preco ? 'R$\u00a0' + Number(r.preco).toLocaleString('pt-BR') : '—';
-    tr.innerHTML = `
-      <td><strong>${r.marca||''}</strong> ${r.modelo||''}</td>
-      <td>${r.familia||'—'}</td><td>${r.filial||'—'}</td><td>${r.patio||'—'}</td>
-      <td>${r.cor_externa||'—'}</td><td>${r.cor_interna||'—'}</td>
-      <td class="mono">${r.fab_mod||'—'}</td><td class="mono">${r.chassi||'—'}</td>
+
+    const preco=r.preco?'R$\u00a0'+Number(r.preco).toLocaleString('pt-BR'):'—';
+    tr.innerHTML=`
+      <td><strong>${r.marca||''}</strong><br><span style="font-size:12px;color:var(--text2)">${r.familia||''}</span></td>
+      <td>${r.modelo||'—'}</td>
+      <td>${r.patio||'—'}</td>
+      <td>${r.cor_externa||'—'}</td>
+      <td>${r.cor_interna||'—'}</td>
+      <td>${r.opcional||'—'}</td>
+      <td class="mono">${r.fab_mod||'—'}</td>
+      <td class="mono">${r.chassi||'—'}</td>
       <td class="mono">${preco}</td>
       <td><span class="badge ${bc}">${bl}</span></td>
-      <td>${acts}</td>`;
+      <td><div class="acts">${acts}</div></td>`;
     tbody.appendChild(tr);
   });
 }
 
 // ── EXPIRA RESERVAS ───────────────────────────────────────
-async function expireReservas() {
-  try {
-    // Busca reservas expiradas
-    const now = new Date().toISOString();
-    const exp = await db.select(T_RESERVAS, `?expira=lt.${now}`);
-    if (!exp || !exp.length) return;
-    // Para cada reserva expirada, devolve status para disponivel
-    for (const r of exp) {
-      await db.update(T_ESTOQUE, { status: 'disponivel' }, `?id=eq.${r.veiculo_id}`);
-      await db.delete(T_RESERVAS, `?id=eq.${r.id}`);
-    }
-  } catch(e) { console.warn('expireReservas:', e.message); }
+async function expireReservas(){
+  try{await rpc('expirar_reservas',{})}catch(e){console.warn('expireReservas:',e.message)}
 }
 
 // ── RESERVAS ──────────────────────────────────────────────
-async function loadReservas() {
+async function loadReservas(){
   showPH('reservas');
-  try {
+  try{
     await expireReservas();
-    const rows = await db.select(T_RESERVAS, '?order=criado.desc');
-    reservasAll = rows || [];
+    const rows=await db.select(T_RESERVAS,'?order=criado.desc');
+    reservasAll=rows||[];
     filterReservas();
     updateCounts();
     startCountdown();
-  } catch(e) { toast('Erro ao carregar reservas: ' + e.message, 'err'); hidePH('reservas'); }
+  }catch(e){toast('Erro ao carregar reservas: '+e.message,'err');hidePH('reservas')}
 }
-
-function filterReservas() {
-  const q = $('f-q-res').value.toLowerCase();
-  const data = reservasAll.filter(r =>
-    !q || [r.veiculo,r.chassi,r.cliente,r.vendedor].join(' ').toLowerCase().includes(q)
-  );
-  renderReservas(data);
+function filterReservas(){
+  const q=$('f-q-res').value.toLowerCase();
+  renderReservas(reservasAll.filter(r=>!q||[r.veiculo,r.chassi,r.cliente,r.vendedor,r.loja].join(' ').toLowerCase().includes(q)));
 }
-
-function renderReservas(data) {
+function renderReservas(data){
   hidePH('reservas');
-  const tbody = $('body-reservas');
-  tbody.innerHTML = '';
-
-  if (!data.length) {
-    $('tbl-reservas').style.display = 'none';
-    $('ph-reservas').innerHTML = 'Nenhuma reserva ativa.';
-    $('ph-reservas').style.display = 'block';
-    return;
+  const tbody=$('body-reservas');tbody.innerHTML='';
+  if(!data.length){
+    $('tbl-reservas').style.display='none';
+    $('ph-reservas').innerHTML='Nenhuma reserva ativa.';
+    $('ph-reservas').style.display='block';return;
   }
-  $('tbl-reservas').style.display = '';
-
-  data.forEach(r => {
-    const isOwner = me && r.vendedor && r.vendedor.trim().toLowerCase() === (me.nome||me.usuario).trim().toLowerCase();
-    const btnV = isOwner
-      ? `<button class="btn-ef" onclick="openVnd('${r.veiculo_id}','${esc(r.veiculo)}','${esc(r.chassi)}','${esc(r.vendedor)}')">✓ Efetivar</button>`
-      : `<span class="btn-lock">🔒 ${esc(r.vendedor)}</span>`;
-
-    const tr = document.createElement('tr');
-    tr.innerHTML = `
+  $('tbl-reservas').style.display='';
+  const perfil=me?.perfil||'vendedor';
+  data.forEach(r=>{
+    const isOwner=me&&r.vendedor&&r.vendedor.trim().toLowerCase()===(me.nome||me.usuario).trim().toLowerCase();
+    let btnV='';
+    if(perfil==='documentalista'||perfil==='administrador'){
+      btnV=`<button class="btn-ef" onclick="openVnd('${r.veiculo_id}','${esc(r.veiculo)}','${esc(r.modelo||'')}','${esc(r.chassi)}','${esc(r.vendedor)}','${esc(r.loja||'')}')">✓ Efetivar</button>`;
+    } else {
+      btnV=`<span class="btn-lock">🔒 Documentalista</span>`;
+    }
+    let btnCan='';
+    if(perfil==='administrador'||(perfil==='vendedor'&&isOwner)){
+      btnCan=`<button class="btn-can" onclick="doCancelarReserva('${r.id}','${r.veiculo_id}')">Cancelar</button>`;
+    }
+    const tr=document.createElement('tr');
+    tr.innerHTML=`
       <td><strong>${r.veiculo||'—'}</strong></td>
       <td class="mono">${r.chassi||'—'}</td>
       <td>${r.cliente||'—'}</td>
       <td>${r.vendedor||'—'}</td>
+      <td>${r.loja||'—'}</td>
       <td class="mono">${fmtDate(r.criado)}</td>
       <td><span class="cdown" data-exp="${r.expira}">--:--</span></td>
-      <td><div class="acts">${btnV}<button class="btn-can" onclick="doCancel('${r.id}','${r.veiculo_id}')">Cancelar</button></div></td>`;
+      <td><div class="acts">${btnV}${btnCan}</div></td>`;
     tbody.appendChild(tr);
   });
-
-  tick();
 }
 
-function startCountdown() {
-  clearInterval(cdTimer);
-  tick();
-  cdTimer = setInterval(tick, 1000);
+function startCountdown(){
+  clearInterval(cdTimer);tick();cdTimer=setInterval(tick,1000);
 }
-
-function tick() {
-  const now = Date.now();
-  let expired = false;
-  document.querySelectorAll('.cdown[data-exp]').forEach(el => {
-    const diff = new Date(el.dataset.exp).getTime() - now;
-    if (diff <= 0) {
-      el.textContent = 'Expirada';
-      el.className = 'cdown expired';
-      expired = true;
-    } else {
-      const m = Math.floor(diff / 60000), s = Math.floor((diff % 60000) / 1000);
-      el.textContent = pad(m) + ':' + pad(s);
-      el.className = diff < 5 * 60000 ? 'cdown urgent' : 'cdown';
+function tick(){
+  const now=Date.now();let expired=false;
+  document.querySelectorAll('.cdown[data-exp]').forEach(el=>{
+    const diff=new Date(el.dataset.exp).getTime()-now;
+    if(diff<=0){el.textContent='Expirada';el.className='cdown expired';expired=true;}
+    else{
+      const m=Math.floor(diff/60000),s=Math.floor((diff%60000)/1000);
+      el.textContent=pad(m)+':'+pad(s);
+      el.className=diff<5*60000?'cdown urgent':'cdown';
     }
   });
-  if (expired) {
-    clearInterval(cdTimer);
-    setTimeout(() => { loadEstoque(); loadReservas(); }, 3000);
-  }
+  if(expired){clearInterval(cdTimer);setTimeout(()=>{loadEstoque();loadReservas();},3000)}
 }
 
 // ── VENDAS ────────────────────────────────────────────────
-async function loadVendas() {
+async function loadVendas(){
   showPH('vendas');
-  try {
-    const rows = await db.select(T_VENDAS, '?order=data.desc');
-    vendasAll = rows || [];
-    filterVendas();
-    updateCounts();
-  } catch(e) { toast('Erro ao carregar vendas: ' + e.message, 'err'); hidePH('vendas'); }
+  try{
+    const rows=await db.select(T_VENDAS,'?order=data.desc');
+    vendasAll=rows||[];
+    filterVendas();updateCounts();
+  }catch(e){toast('Erro ao carregar vendas: '+e.message,'err');hidePH('vendas')}
 }
-
-function filterVendas() {
-  const q = $('f-q-vnd').value.toLowerCase();
-  const data = vendasAll.filter(r =>
-    !q || [r.veiculo,r.chassi,r.cliente,r.vendedor,r.loja].join(' ').toLowerCase().includes(q)
-  );
-  renderVendas(data);
+function filterVendas(){
+  const q=$('f-q-vnd').value.toLowerCase();
+  renderVendas(vendasAll.filter(r=>!q||[r.veiculo,r.chassi,r.cliente,r.vendedor,r.loja].join(' ').toLowerCase().includes(q)));
 }
-
-function renderVendas(data) {
+function renderVendas(data){
   hidePH('vendas');
-  const tbody = $('body-vendas');
-  tbody.innerHTML = '';
-  if (!data.length) {
-    $('tbl-vendas').style.display = 'none';
-    $('ph-vendas').innerHTML = 'Nenhuma venda registrada.';
-    $('ph-vendas').style.display = 'block';
-    return;
+  const tbody=$('body-vendas');tbody.innerHTML='';
+  const isAdmin=me?.perfil==='administrador';
+  if(!data.length){
+    $('tbl-vendas').style.display='none';
+    $('ph-vendas').innerHTML='Nenhuma venda registrada.';
+    $('ph-vendas').style.display='block';return;
   }
-  $('tbl-vendas').style.display = '';
-  data.forEach(r => {
-    const tr = document.createElement('tr');
-    tr.innerHTML = `
+  $('tbl-vendas').style.display='';
+  data.forEach(r=>{
+    const cancelado=r.loja&&r.loja.startsWith('[CANCELADO]');
+    const tr=document.createElement('tr');
+    if(cancelado)tr.style.opacity='.5';
+    let adminCell='';
+    if(isAdmin&&!cancelado){
+      adminCell=`<td><button class="btn-admin" onclick="openCancelarVenda('${r.id}','${r.veiculo_id}','${esc(r.veiculo)}')">Cancelar venda</button></td>`;
+    } else if(isAdmin){
+      adminCell=`<td><span style="font-size:11px;color:var(--text3)">Cancelada</span></td>`;
+    }
+    tr.innerHTML=`
       <td><strong>${r.veiculo||'—'}</strong></td>
       <td class="mono">${r.chassi||'—'}</td>
-      <td>${r.cliente||'—'}</td><td>${r.vendedor||'—'}</td><td>${r.loja||'—'}</td>
+      <td>${r.cliente||'—'}</td>
+      <td>${r.vendedor||'—'}</td>
+      <td>${r.loja||'—'}</td>
       <td class="mono">${fmtDate(r.data)}</td>
-      <td style="max-width:180px;color:var(--text2);font-size:12px">${r.obs||'—'}</td>`;
+      <td style="max-width:200px;color:var(--text2);font-size:12px">${r.obs||'—'}</td>
+      ${adminCell}`;
     tbody.appendChild(tr);
   });
 }
 
 // ── MODAL RESERVA ─────────────────────────────────────────
-function openRes(id, nome, chassi) {
-  sel = { id, nome, chassi };
-  $('ov-res-sub').textContent = nome + ' · ' + chassi;
-  $('m-res-cli').value = '';
-  $('m-res-vnd').value = me ? (me.nome || me.usuario) : '';
+function openRes(id,nomeFamilia,modelo,chassi){
+  sel={id,nome:nomeFamilia,modelo,chassi};
+  $('ov-res-sub').textContent=nomeFamilia+' '+modelo+' · '+chassi;
+  $('m-res-cli').value='';
+  $('m-res-vnd').value=me?(me.nome||me.usuario):'';
+  $('m-res-loja').value=me?.loja||'';
   $('ov-res').classList.add('open');
-  setTimeout(() => $('m-res-cli').focus(), 120);
+  setTimeout(()=>$('m-res-cli').focus(),120);
 }
-
-async function doReserva() {
-  const cli = $('m-res-cli').value.trim();
-  const vnd = $('m-res-vnd').value.trim();
-  if (!cli) { toast('Informe o nome do cliente.', 'err'); return; }
-  try {
-    // Confere status atual direto no banco (evita race condition)
-    const [veiculo] = await db.select(T_ESTOQUE, `?id=eq.${sel.id}&limit=1`);
-    if (!veiculo || veiculo.status !== 'disponivel') {
-      toast('Veículo não está mais disponível.', 'err'); closeModal('ov-res'); loadEstoque(); return;
-    }
-    const agora  = new Date();
-    const expira = new Date(agora.getTime() + HORAS_RESERVA * 3600000);
-
-    await db.update(T_ESTOQUE, { status: 'reservado' }, `?id=eq.${sel.id}`);
-    await db.insert(T_RESERVAS, {
-      veiculo_id: sel.id, veiculo: sel.nome, chassi: sel.chassi,
-      cliente: cli, vendedor: vnd,
-      criado: agora.toISOString(), expira: expira.toISOString(),
+async function doReserva(){
+  const cli=$('m-res-cli').value.trim();
+  if(!cli){toast('Informe o nome do cliente.','err');return}
+  try{
+    const resp=await rpc('reservar_veiculo',{
+      p_veiculo_id:sel.id,
+      p_veiculo:sel.nome+' '+sel.modelo,
+      p_chassi:sel.chassi,
+      p_cliente:cli,
+      p_vendedor:me?(me.nome||me.usuario):'',
+      p_loja:me?.loja||'',
     });
-
-    toast('Reserva realizada! Válida por 1 hora.', 'ok');
-    closeModal('ov-res');
-    loadEstoque();
-    reservasAll = [];
-  } catch(e) { toast('Erro: ' + e.message, 'err'); }
+    if(!resp.ok){toast(resp.msg||'Erro ao reservar.','err');return}
+    toast('Reserva realizada! Válida por 1 hora.','ok');
+    closeModal('ov-res');reservasAll=[];loadEstoque();
+  }catch(e){toast('Erro: '+e.message,'err')}
 }
 
 // ── MODAL VENDA ───────────────────────────────────────────
-function openVnd(id, nome, chassi, vendedorFixo) {
-  sel = { id, nome, chassi };
-  $('ov-vnd-sub').textContent = nome + ' · ' + chassi;
-  $('m-vnd-cli').value  = '';
-  $('m-vnd-vnd').value  = vendedorFixo || (me ? (me.nome || me.usuario) : '');
-  $('m-vnd-loja').value = '';
-  $('m-vnd-obs').value  = '';
+function openVnd(id,nomeFamilia,modelo,chassi,vendedorFixo,lojaFixa){
+  sel={id,nome:nomeFamilia,modelo,chassi};
+  $('ov-vnd-sub').textContent=nomeFamilia+' '+modelo+' · '+chassi;
+  $('m-vnd-cli').value='';
+  $('m-vnd-vnd').value=vendedorFixo||(me?(me.nome||me.usuario):'');
+  $('m-vnd-loja').value=lojaFixa||me?.loja||'';
+  $('m-vnd-obs').value='';
   $('ov-vnd').classList.add('open');
-  setTimeout(() => $('m-vnd-cli').focus(), 120);
+  setTimeout(()=>$('m-vnd-cli').focus(),120);
 }
-
-async function doVenda() {
-  const cli  = $('m-vnd-cli').value.trim();
-  const vnd  = $('m-vnd-vnd').value.trim();
-  const loja = $('m-vnd-loja').value.trim();
-  const obs  = $('m-vnd-obs').value.trim();
-  if (!cli || !loja) { toast('Preencha cliente e loja.', 'err'); return; }
-  try {
-    const [veiculo] = await db.select(T_ESTOQUE, `?id=eq.${sel.id}&limit=1`);
-    if (!veiculo || veiculo.status === 'vendido') {
-      toast('Veículo já vendido.', 'err'); closeModal('ov-vnd'); loadEstoque(); return;
-    }
-    await db.update(T_ESTOQUE, { status: 'vendido' }, `?id=eq.${sel.id}`);
-    await db.insert(T_VENDAS, {
-      veiculo_id: sel.id, veiculo: sel.nome, chassi: sel.chassi,
-      cliente: cli, vendedor: vnd, loja, obs,
-      data: new Date().toISOString(),
+async function doVenda(){
+  const cli=$('m-vnd-cli').value.trim();
+  const loja=$('m-vnd-loja').value.trim();
+  if(!cli){toast('Preencha o nome do cliente.','err');return}
+  try{
+    const resp=await rpc('vender_veiculo',{
+      p_veiculo_id:sel.id,
+      p_veiculo:sel.nome+' '+sel.modelo,
+      p_chassi:sel.chassi,
+      p_cliente:cli,
+      p_vendedor:$('m-vnd-vnd').value.trim(),
+      p_loja:loja,
+      p_obs:$('m-vnd-obs').value.trim()||'',
     });
-    // Remove reserva se existia
-    await db.delete(T_RESERVAS, `?veiculo_id=eq.${sel.id}`);
-
-    toast('Venda registrada com sucesso!', 'ok');
-    closeModal('ov-vnd');
-    loadEstoque();
-    vendasAll = []; reservasAll = [];
-  } catch(e) { toast('Erro: ' + e.message, 'err'); }
+    if(!resp.ok){toast(resp.msg||'Erro ao registrar venda.','err');return}
+    toast('Venda registrada com sucesso!','ok');
+    closeModal('ov-vnd');vendasAll=[];reservasAll=[];loadEstoque();
+  }catch(e){toast('Erro: '+e.message,'err')}
 }
 
-async function doCancel(resId, veiculoId) {
-  if (!confirm('Cancelar a reserva? O veículo voltará para disponível.')) return;
-  try {
-    await db.update(T_ESTOQUE, { status: 'disponivel' }, `?id=eq.${veiculoId}`);
-    await db.delete(T_RESERVAS, `?id=eq.${resId}`);
-    toast('Reserva cancelada.', 'ok');
-    loadEstoque(); loadReservas();
-  } catch(e) { toast('Erro: ' + e.message, 'err'); }
+// ── CANCELAR RESERVA ──────────────────────────────────────
+async function doCancelarReserva(resId,veiculoId){
+  if(!confirm('Cancelar a reserva? O veículo voltará para disponível.'))return;
+  try{
+    await rpc('cancelar_reserva',{p_reserva_id:resId,p_veiculo_id:veiculoId});
+    toast('Reserva cancelada.','ok');
+    loadEstoque();loadReservas();
+  }catch(e){toast('Erro: '+e.message,'err')}
 }
 
-function closeModal(id) { $(id).classList.remove('open'); }
-
-// ── UTILITÁRIOS ───────────────────────────────────────────
-function updateCounts() {
-  $('n-estoque').textContent  = estoqueAll.filter(r=>r.status==='disponivel').length;
-  $('n-reservas').textContent = estoqueAll.filter(r=>r.status==='reservado').length;
-  $('n-vendas').textContent   = estoqueAll.filter(r=>r.status==='vendido').length;
+// ── CANCELAR VENDA (admin) ────────────────────────────────
+function openCancelarVenda(vendaId,veiculoId,veiculo){
+  sel={vendaId,veiculoId,veiculo};
+  $('ov-cancel-vnd-sub').textContent=veiculo;
+  $('m-justificativa').value='';
+  $('ov-cancel-vnd').classList.add('open');
+  setTimeout(()=>$('m-justificativa').focus(),120);
+}
+async function doCancelarVenda(){
+  const just=$('m-justificativa').value.trim();
+  if(!just){toast('Informe a justificativa do cancelamento.','err');return}
+  try{
+    const resp=await rpc('cancelar_venda',{
+      p_venda_id:sel.vendaId,
+      p_veiculo_id:sel.veiculoId,
+      p_justificativa:just,
+    });
+    if(!resp.ok){toast(resp.msg||'Erro.','err');return}
+    toast('Venda cancelada. Veículo voltou para disponível.','ok');
+    closeModal('ov-cancel-vnd');vendasAll=[];loadEstoque();loadVendas();
+  }catch(e){toast('Erro: '+e.message,'err')}
 }
 
-function showPH(p) {
-  $('tbl-' + p).style.display   = 'none';
-  $('ph-'  + p).innerHTML       = '<div class="spinner"></div><br>Carregando…';
-  $('ph-'  + p).style.display   = 'block';
+function closeModal(id){$(id).classList.remove('open')}
+
+// ── UTILS ─────────────────────────────────────────────────
+function updateCounts(){
+  $('n-estoque').textContent =estoqueAll.filter(r=>r.status==='disponivel').length;
+  $('n-reservas').textContent=estoqueAll.filter(r=>r.status==='reservado').length;
+  $('n-vendas').textContent  =estoqueAll.filter(r=>r.status==='vendido').length;
 }
-function hidePH(p) { $('ph-' + p).style.display = 'none'; }
-
-function fmtDate(iso) {
-  if (!iso) return '—';
-  try { return new Date(iso).toLocaleString('pt-BR', {day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}); }
-  catch { return iso; }
-}
-
-function pad(n) { return String(n).padStart(2,'0'); }
-function esc(s) { return (s||'').replace(/'/g,"\\'").replace(/"/g,'&quot;'); }
-function v(id)  { return $(id).value; }
-function $(id)  { return document.getElementById(id); }
-
+function showPH(p){$('tbl-'+p).style.display='none';$('ph-'+p).innerHTML='<div class="spinner"></div><br>Carregando…';$('ph-'+p).style.display='block'}
+function hidePH(p){$('ph-'+p).style.display='none'}
+function fmtDate(iso){if(!iso)return'—';try{return new Date(iso).toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})}catch{return iso}}
+function pad(n){return String(n).padStart(2,'0')}
+function esc(s){return(s||'').replace(/'/g,"\\'").replace(/"/g,'&quot;')}
+function v(id){return $(id).value}
+function $(id){return document.getElementById(id)}
 let toastTmr;
-function toast(msg, type) {
-  const el = $('toast');
-  el.textContent = msg;
-  el.className = 'toast show ' + (type||'');
-  clearTimeout(toastTmr);
-  toastTmr = setTimeout(() => el.classList.remove('show'), 4000);
+function toast(msg,type){
+  const el=$('toast');el.textContent=msg;el.className='toast show '+(type||'');
+  clearTimeout(toastTmr);toastTmr=setTimeout(()=>el.classList.remove('show'),4000);
 }
-
-document.querySelectorAll('.overlay').forEach(el =>
-  el.addEventListener('click', e => { if (e.target === el) el.classList.remove('open'); })
+document.querySelectorAll('.overlay').forEach(el=>
+  el.addEventListener('click',e=>{if(e.target===el)el.classList.remove('open')})
 );
 </script>
 </body>
