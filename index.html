@@ -264,8 +264,8 @@ thead th.no-sort:hover{background:var(--surface2)}
         <input class="f-input"   id="f-q"      placeholder="Buscar modelo, chassi, cor…" oninput="filterEstoque()">
         <select class="f-select" id="f-marca"   onchange="filterEstoque()"><option value="">Todas as marcas</option></select>
         <select class="f-select" id="f-familia" onchange="filterEstoque()"><option value="">Todas as famílias</option></select>
-        <select class="f-select" id="f-modelo"  onchange="filterEstoque()"><option value="">Todos os modelos</option></select>
-        <select class="f-select" id="f-cor"     onchange="filterEstoque()"><option value="">Todas as cores</option></select>
+        <input class="f-input" id="f-modelo" placeholder="Modelo…" oninput="filterEstoque()" style="min-width:130px;flex:0 1 155px">
+        <input class="f-input" id="f-cor"    placeholder="Cor externa…" oninput="filterEstoque()" style="min-width:120px;flex:0 1 145px">
         <select class="f-select" id="f-status"  onchange="filterEstoque()">
           <option value="disponivel">Disponíveis</option>
           <option value="">Todos</option>
@@ -740,8 +740,7 @@ function applySortForRender(data, table) {
 function populateFilters(data){
   fill('f-marca',  data.map(r=>r.marca),   'Todas as marcas');
   fill('f-familia',data.map(r=>r.familia), 'Todas as famílias');
-  fill('f-modelo', data.map(r=>r.modelo),  'Todos os modelos');
-  fill('f-cor',    data.map(r=>r.cor_externa),'Todas as cores');
+  // f-modelo e f-cor são inputs de texto — sem lista para popular
 }
 function fill(id,list,ph){
   const s=$(id),cur=s.value;
@@ -755,11 +754,15 @@ function fill(id,list,ph){
 function filterEstoque(){
   const q=$('f-q').value.toLowerCase();
   const ma=$('f-marca').value,fa=$('f-familia').value;
-  const mo=$('f-modelo').value,co=$('f-cor').value,st=$('f-status').value;
+  const mo=$('f-modelo').value.toLowerCase().trim();
+  const co=$('f-cor').value.toLowerCase().trim();
+  const st=$('f-status').value;
   const data=estoqueAll.filter(r=>{
     const hay=[r.marca,r.modelo,r.familia,r.cor_externa,r.cor_interna,r.chassi,r.filial,r.patio,r.opcional].join(' ').toLowerCase();
     return(!q||hay.includes(q))&&(!ma||r.marca===ma)&&(!fa||r.familia===fa)
-      &&(!mo||r.modelo===mo)&&(!co||r.cor_externa===co)&&(!st||r.status===st);
+      &&(!mo||(r.modelo||'').toLowerCase().includes(mo))
+      &&(!co||(r.cor_externa||'').toLowerCase().includes(co))
+      &&(!st||r.status===st);
   });
   renderEstoque(applySortForRender(data,'estoque'));
   const disp=estoqueAll.filter(r=>r.status==='disponivel').length;
