@@ -155,6 +155,32 @@ td{padding:11px 16px;font-size:13.5px;vertical-align:middle}
 .btn-fo-new{padding:7px 14px;background:var(--blue);color:#fff;border:none;border-radius:var(--r);font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;transition:background .15s;white-space:nowrap}
 .btn-fo-new:hover{background:var(--blue2)}
 
+/* SUBTABS */
+.subtabs{display:flex;gap:0;margin-bottom:1.25rem;border-bottom:2px solid var(--border)}
+.subtab{padding:10px 20px;font-size:13px;font-weight:500;color:var(--text3);cursor:pointer;border-bottom:2.5px solid transparent;margin-bottom:-2px;background:none;border-top:none;border-left:none;border-right:none;font-family:inherit;transition:color .15s}
+.subtab:hover{color:var(--text2)}
+.subtab.active{color:var(--blue);border-bottom-color:var(--blue)}
+
+/* IMPORT CARD */
+.import-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);box-shadow:var(--shadow);display:flex;gap:0;overflow:hidden}
+.import-section{flex:1;padding:2rem;display:flex;flex-direction:column;gap:.75rem;align-items:flex-start}
+.import-divider{width:1px;background:var(--border)}
+.import-icon{font-size:2rem}
+.import-title{font-size:15px;font-weight:600;color:var(--text)}
+.import-desc{font-size:13px;color:var(--text2);line-height:1.6}
+.import-info{background:var(--blue-bg);border:1px solid var(--blue-bd);border-radius:var(--r);padding:10px 14px;font-size:13px;color:var(--blue2)}
+.btn-import-label{display:inline-flex;align-items:center;padding:8px 16px;background:var(--surface2);border:1.5px solid var(--border);border-radius:var(--r);font-size:13px;font-weight:500;cursor:pointer;color:var(--text2);transition:border-color .15s,color .15s}
+.btn-import-label:hover{border-color:var(--blue);color:var(--blue)}
+.btn-import-label input{display:none}
+
+/* USER TABLE ACTIONS */
+.btn-edit{padding:4px 10px;border-radius:6px;font-size:11.5px;font-weight:500;cursor:pointer;font-family:inherit;background:var(--blue-bg);color:var(--blue2);border:1px solid var(--blue-bd);transition:opacity .15s}
+.btn-edit:hover{opacity:.75}
+.btn-del{padding:4px 10px;border-radius:6px;font-size:11.5px;font-weight:500;cursor:pointer;font-family:inherit;background:var(--red-bg);color:var(--red);border:1px solid var(--red-bd);transition:opacity .15s}
+.btn-del:hover{opacity:.75}
+
+@media(max-width:900px){.import-card{flex-direction:column}.import-divider{width:auto;height:1px}}
+
 @media(max-width:900px){.ranking-grid{grid-template-columns:1fr}.rank-card-wide{grid-column:auto}}
 
 /* SORTABLE HEADERS */
@@ -227,6 +253,7 @@ thead th.no-sort:hover{background:var(--surface2)}
     <button class="tab-btn"        onclick="goTab('vendas')"   id="tab-vendas">Vendas   <span class="tab-pill" id="n-vendas">0</span></button>
     <button class="tab-btn"        onclick="goTab('ranking')"  id="tab-ranking">Ranking</button>
     <button class="tab-btn"        onclick="goTab('firmorder')" id="tab-firmorder">Firm Order <span class="tab-pill" id="n-fo">0</span></button>
+    <button class="tab-btn" onclick="goTab('admin')" id="tab-admin" style="display:none;color:var(--amber)">⚙ Admin</button>
   </div>
 
   <div class="main">
@@ -378,6 +405,67 @@ thead th.no-sort:hover{background:var(--surface2)}
       </div>
     </div>
 
+    <!-- ADMIN -->
+    <div id="panel-admin" style="display:none">
+
+      <!-- Sub-tabs -->
+      <div class="subtabs">
+        <button class="subtab active" onclick="goSubTab('usuarios')" id="subtab-usuarios">👥 Usuários</button>
+        <button class="subtab"        onclick="goSubTab('estoque-import')" id="subtab-estoque-import">📦 Atualizar Estoque</button>
+      </div>
+
+      <!-- USUARIOS -->
+      <div id="subpanel-usuarios">
+        <div class="filterbar" style="margin-top:1rem">
+          <input class="f-input" id="f-q-usr" placeholder="Buscar usuário, nome, loja…" oninput="filterUsuarios()">
+          <button class="btn-fo-new" onclick="openUsuario(null)">+ Novo usuário</button>
+          <button class="btn-refresh" onclick="loadUsuarios()">↻ Atualizar</button>
+        </div>
+        <div class="table-card">
+          <div class="table-scroll">
+            <table id="tbl-usr" style="display:none">
+              <thead><tr>
+                <th>Nome</th><th>Usuário</th><th>Perfil</th><th>Loja</th><th class="no-sort">Ações</th>
+              </tr></thead>
+              <tbody id="body-usr"></tbody>
+            </table>
+            <div class="placeholder" id="ph-usr"><div class="spinner"></div><br>Carregando…</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ESTOQUE IMPORT -->
+      <div id="subpanel-estoque-import" style="display:none">
+        <div class="import-card">
+          <div class="import-section">
+            <div class="import-icon">⬇️</div>
+            <div class="import-title">Baixar planilha modelo</div>
+            <div class="import-desc">Baixe a planilha padrão, preencha com os veículos e suba no passo seguinte.</div>
+            <button class="btn-fo-new" onclick="downloadTemplate()">Baixar planilha modelo (.csv)</button>
+          </div>
+          <div class="import-divider"></div>
+          <div class="import-section">
+            <div class="import-icon">⬆️</div>
+            <div class="import-title">Substituir estoque</div>
+            <div class="import-desc">
+              Selecione a planilha preenchida. <strong>Atenção:</strong> isso vai substituir <em>todo</em> o estoque atual.<br>
+              Veículos com status <strong>reservado</strong> ou <strong>vendido</strong> serão preservados.
+            </div>
+            <label class="btn-import-label">
+              <input type="file" id="file-import" accept=".csv" onchange="previewImport(this)">
+              Selecionar arquivo .csv
+            </label>
+            <div id="import-preview" style="display:none;margin-top:1rem">
+              <div id="import-preview-info" class="import-info"></div>
+              <button class="btn-ok-red" style="margin-top:.75rem" onclick="confirmarImport()">⚠ Substituir estoque agora</button>
+            </div>
+            <div id="import-progress" style="display:none;margin-top:1rem;font-size:13px;color:var(--text2)"></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
   </div>
 </div>
 
@@ -424,6 +512,33 @@ thead th.no-sort:hover{background:var(--surface2)}
     <div class="modal-actions">
       <button class="btn-cancel" onclick="closeModal('ov-cancel-vnd')">Voltar</button>
       <button class="btn-ok-red" onclick="doCancelarVenda()">Cancelar venda</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL USUARIO -->
+<div class="overlay" id="ov-usr">
+  <div class="modal" style="max-width:420px">
+    <div class="modal-title" id="ov-usr-title">Novo usuário</div>
+    <div class="modal-sub" id="ov-usr-sub">Preencha os dados de acesso</div>
+    <input type="hidden" id="usr-id">
+    <div class="mfield"><label>Nome completo *</label><input id="usr-nome" placeholder="Ex: João Silva"></div>
+    <div class="mfield"><label>Usuário (login) *</label><input id="usr-usuario" placeholder="Ex: joao.silva"></div>
+    <div class="mfield"><label>Senha *</label><input id="usr-senha" type="password" placeholder="Mínimo 6 caracteres">
+      <div style="font-size:11px;color:var(--text3);margin-top:3px" id="usr-senha-hint">Deixe em branco para manter a senha atual (edição)</div>
+    </div>
+    <div class="mfield">
+      <label>Perfil *</label>
+      <select id="usr-perfil" style="width:100%;padding:9px 12px;background:var(--surface2);border:1.5px solid var(--border);border-radius:var(--r);font-family:inherit;font-size:13px;color:var(--text)">
+        <option value="vendedor">Vendedor</option>
+        <option value="documentalista">Documentalista</option>
+        <option value="administrador">Administrador</option>
+      </select>
+    </div>
+    <div class="mfield"><label>Loja</label><input id="usr-loja" placeholder="Ex: BYD Goiânia"></div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeModal('ov-usr')">Cancelar</button>
+      <button class="btn-ok-vnd" onclick="salvarUsuario()">Salvar usuário</button>
     </div>
   </div>
 </div>
@@ -535,6 +650,10 @@ async function doLogin(){
     if(me.perfil==='administrador') $('th-cancelar').style.display='';
 
     loadEstoque();
+    // Mostra aba admin só para administrador
+    if(me.perfil==='administrador'){
+      $('tab-admin').style.display='';
+    }
     // Esconde botão de nova FO para documentalista
     if(me.perfil==='documentalista'){
       const btn=$('btn-fo-new');
@@ -554,11 +673,12 @@ function doLogout(){
   $('chip-perfil').innerHTML='';
   $('th-cancelar').style.display='none';
   const foBtn=$('btn-fo-new');if(foBtn)foBtn.style.display='';
+  $('tab-admin').style.display='none';
 }
 
 // ── TABS ──────────────────────────────────────────────────
 function goTab(tab){
-  ['estoque','reservas','vendas','ranking','firmorder'].forEach(t=>{
+  ['estoque','reservas','vendas','ranking','firmorder','admin'].forEach(t=>{
     $('panel-'+t).style.display=t===tab?'block':'none';
     $('tab-'+t).classList.toggle('active',t===tab);
   });
@@ -566,6 +686,14 @@ function goTab(tab){
   if(tab==='vendas'&&!vendasAll.length)loadVendas();
   if(tab==='ranking')loadRanking();
   if(tab==='firmorder'&&!foAll.length)loadFO();
+  if(tab==='admin')loadUsuarios();
+}
+
+function goSubTab(sub){
+  ['usuarios','estoque-import'].forEach(t=>{
+    $('subpanel-'+t).style.display=t===sub?'block':'none';
+    $('subtab-'+t).classList.toggle('active',t===sub);
+  });
 }
 
 // ── ESTOQUE ───────────────────────────────────────────────
@@ -1041,6 +1169,180 @@ async function doFO(){
     toast('Firm Order registrada com sucesso!','ok');
     closeModal('ov-fo');foAll=[];loadFO();loadRanking();
   }catch(e){toast('Erro: '+e.message,'err')}
+}
+
+// ── USUÁRIOS (ADMIN) ─────────────────────────────────────
+let usuariosAll = [];
+
+async function loadUsuarios(){
+  showPH('usr');
+  try{
+    const rows = await db.select(T_USUARIOS,'?order=nome');
+    usuariosAll = rows||[];
+    filterUsuarios();
+  }catch(e){ toast('Erro ao carregar usuários: '+e.message,'err'); hidePH('usr'); }
+}
+
+function filterUsuarios(){
+  const q=$('f-q-usr').value.toLowerCase();
+  const data=usuariosAll.filter(r=>!q||[r.nome,r.usuario,r.loja,r.perfil].join(' ').toLowerCase().includes(q));
+  renderUsuarios(data);
+}
+
+function renderUsuarios(data){
+  hidePH('usr');
+  const tbody=$('body-usr'); tbody.innerHTML='';
+  if(!data.length){
+    $('tbl-usr').style.display='none';
+    $('ph-usr').innerHTML='Nenhum usuário encontrado.';
+    $('ph-usr').style.display='block'; return;
+  }
+  $('tbl-usr').style.display='';
+  const pLabels={vendedor:'Vendedor',documentalista:'Documentalista',administrador:'Administrador'};
+  const pClass={vendedor:'pb-vendedor',documentalista:'pb-documentalista',administrador:'pb-administrador'};
+  data.forEach(r=>{
+    const isSelf = me && r.id === me.id;
+    const tr=document.createElement('tr');
+    tr.innerHTML=`
+      <td><strong>${r.nome||'—'}</strong></td>
+      <td class="mono">${r.usuario||'—'}</td>
+      <td><span class="perfil-badge ${pClass[r.perfil]||'pb-vendedor'}">${pLabels[r.perfil]||r.perfil||'vendedor'}</span></td>
+      <td>${r.loja||'—'}</td>
+      <td><div class="acts">
+        <button class="btn-edit" onclick='openUsuario(${JSON.stringify(r)})'>Editar</button>
+        ${isSelf?'':'<button class="btn-del" onclick="excluirUsuario(''+r.id+'',''+esc(r.nome||r.usuario)+'')">Excluir</button>'}
+      </div></td>`;
+    tbody.appendChild(tr);
+  });
+}
+
+function openUsuario(usr){
+  $('usr-id').value      = usr?.id||'';
+  $('usr-nome').value    = usr?.nome||'';
+  $('usr-usuario').value = usr?.usuario||'';
+  $('usr-senha').value   = '';
+  $('usr-perfil').value  = usr?.perfil||'vendedor';
+  $('usr-loja').value    = usr?.loja||'';
+  $('ov-usr-title').textContent = usr ? 'Editar usuário' : 'Novo usuário';
+  $('ov-usr-sub').textContent   = usr ? (usr.nome||usr.usuario) : 'Preencha os dados de acesso';
+  $('usr-senha-hint').style.display = usr ? 'block' : 'none';
+  $('ov-usr').classList.add('open');
+  setTimeout(()=>$('usr-nome').focus(),120);
+}
+
+async function salvarUsuario(){
+  const id     = $('usr-id').value;
+  const nome   = $('usr-nome').value.trim();
+  const usuario= $('usr-usuario').value.trim();
+  const senha  = $('usr-senha').value.trim();
+  const perfil = $('usr-perfil').value;
+  const loja   = $('usr-loja').value.trim();
+
+  if(!nome||!usuario){ toast('Preencha nome e usuário.','err'); return; }
+  if(!id && !senha){ toast('Informe uma senha para o novo usuário.','err'); return; }
+  if(senha && senha.length < 6){ toast('A senha precisa ter ao menos 6 caracteres.','err'); return; }
+
+  try{
+    if(id){
+      const body={nome,usuario,perfil,loja};
+      if(senha) body.senha=senha;
+      await db.update(T_USUARIOS,body,`?id=eq.${id}`);
+      toast('Usuário atualizado!','ok');
+    } else {
+      await db.insert(T_USUARIOS,{nome,usuario,senha,perfil,loja});
+      toast('Usuário criado com sucesso!','ok');
+    }
+    closeModal('ov-usr');
+    loadUsuarios();
+  }catch(e){ toast('Erro: '+e.message,'err'); }
+}
+
+async function excluirUsuario(id,nome){
+  if(!confirm(`Excluir o usuário "${nome}"? Esta ação não pode ser desfeita.`)) return;
+  try{
+    await db.delete(T_USUARIOS,`?id=eq.${id}`);
+    toast('Usuário excluído.','ok');
+    loadUsuarios();
+  }catch(e){ toast('Erro: '+e.message,'err'); }
+}
+
+// ── IMPORT DE ESTOQUE (ADMIN) ─────────────────────────────
+let importData = [];
+
+function downloadTemplate(){
+  const header='marca,filial,patio,familia,modelo,cor_externa,cor_interna,fab_mod,preco,chassi,opcional';
+  const exemplo='BYD,BYD Goiânia,BYD Goiânia,BYD - SONG PLUS,I/BYD SONG PLUS GS 450DM,AZUL,AZUL/CINZA,24/25,225412,LGXC74C48S0040590,Teto Solar';
+  const blob=new Blob([header+'\n'+exemplo],{type:'text/csv;charset=utf-8;'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download='modelo_estoque.csv';
+  a.click();
+}
+
+function previewImport(input){
+  const file=input.files[0];
+  if(!file) return;
+  const reader=new FileReader();
+  reader.onload=function(e){
+    const text=e.target.result;
+    const lines=text.split('\n').filter(l=>l.trim());
+    const header=lines[0].split(',').map(h=>h.trim().toLowerCase().replace(/"/g,''));
+    const required=['marca','modelo','chassi'];
+    const missing=required.filter(r=>!header.includes(r));
+    if(missing.length){
+      toast('Colunas ausentes no CSV: '+missing.join(', '),'err');
+      $('import-preview').style.display='none'; return;
+    }
+    importData=[];
+    for(let i=1;i<lines.length;i++){
+      const vals=lines[i].split(',').map(v=>v.trim().replace(/^"|"$/g,''));
+      if(vals.every(v=>!v)) continue;
+      const row={};
+      header.forEach((h,idx)=>{ row[h]=vals[idx]||''; });
+      row.status='disponivel';
+      importData.push(row);
+    }
+    $('import-preview-info').innerHTML=
+      `<strong>${importData.length} veículos</strong> encontrados no arquivo <strong>${file.name}</strong>.<br>
+       Clique em "Substituir estoque" para continuar.`;
+    $('import-preview').style.display='block';
+    $('import-progress').style.display='none';
+  };
+  reader.readAsText(file,'UTF-8');
+}
+
+async function confirmarImport(){
+  if(!importData.length){ toast('Nenhum dado para importar.','err'); return; }
+  if(!confirm(`Isso vai substituir TODOS os veículos disponíveis do estoque por ${importData.length} veículos do arquivo.\n\nVeículos reservados e vendidos serão preservados.\n\nConfirmar?`)) return;
+
+  const prog=$('import-progress');
+  prog.style.display='block';
+  $('import-preview').style.display='none';
+
+  try{
+    prog.textContent='Removendo veículos disponíveis…';
+    // Deleta apenas os disponíveis (preserva reservados e vendidos)
+    await db.delete(T_ESTOQUE,'?status=eq.disponivel');
+
+    prog.textContent=`Importando ${importData.length} veículos…`;
+    // Insere em lotes de 200 para não sobrecarregar
+    const LOTE=200;
+    for(let i=0;i<importData.length;i+=LOTE){
+      const lote=importData.slice(i,i+LOTE);
+      await db.insert(T_ESTOQUE,lote);
+      prog.textContent=`Importando… ${Math.min(i+LOTE,importData.length)} de ${importData.length}`;
+    }
+    prog.textContent='✓ Importação concluída com sucesso!';
+    prog.style.color='var(--green)';
+    importData=[];
+    $('file-import').value='';
+    setTimeout(()=>{ prog.style.display='none'; prog.style.color=''; loadEstoque(); goTab('estoque'); },2000);
+    toast('Estoque atualizado com sucesso!','ok');
+  }catch(e){
+    prog.textContent='Erro na importação: '+e.message;
+    prog.style.color='var(--red)';
+    toast('Erro: '+e.message,'err');
+  }
 }
 
 // ── UTILS ─────────────────────────────────────────────────
