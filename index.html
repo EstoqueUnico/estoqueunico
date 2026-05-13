@@ -352,7 +352,7 @@ thead th.no-sort:hover{background:var(--surface2)}
       <div class="filterbar">
         <input class="f-input" id="f-q-fo" placeholder="Buscar por cliente, modelo, chassi…" oninput="filterFO()">
         <button class="btn-refresh" onclick="loadFO()">↻ Atualizar</button>
-        <button class="btn-fo-new" onclick="openFO()">+ Nova Firm Order</button>
+        <button class="btn-fo-new" id="btn-fo-new" onclick="openFO()">+ Nova Firm Order</button>
       </div>
       <div class="table-card">
         <div class="table-scroll">
@@ -430,28 +430,33 @@ thead th.no-sort:hover{background:var(--surface2)}
 
 <!-- MODAL FIRM ORDER -->
 <div class="overlay" id="ov-fo">
-  <div class="modal" style="max-width:600px">
+  <div class="modal" style="max-width:520px">
     <div class="modal-title">Nova Firm Order</div>
-    <div class="modal-sub">Venda de veículo fora do estoque</div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem">
-      <div class="mfield"><label>Marca *</label><input id="fo-marca" placeholder="Ex: BYD"></div>
-      <div class="mfield"><label>Família</label><input id="fo-familia" placeholder="Ex: BYD - SONG PLUS"></div>
-      <div class="mfield"><label>Modelo *</label><input id="fo-modelo" placeholder="Ex: I/BYD SONG PLUS"></div>
-      <div class="mfield"><label>Fab/Mod</label><input id="fo-fabmod" placeholder="Ex: 24/25"></div>
-      <div class="mfield"><label>Cor Externa</label><input id="fo-corext" placeholder="Ex: AZUL"></div>
-      <div class="mfield"><label>Cor Interna</label><input id="fo-corint" placeholder="Ex: PRETO"></div>
-      <div class="mfield"><label>Opcional</label><input id="fo-opcional" placeholder="Ex: Teto solar"></div>
-      <div class="mfield"><label>Chassi</label><input id="fo-chassi" placeholder="Opcional"></div>
-      <div class="mfield"><label>Preço</label><input id="fo-preco" type="number" placeholder="0.00"></div>
-      <div class="mfield"><label>Pátio</label><input id="fo-patio" placeholder="Ex: BYD Goiânia"></div>
-      <div class="mfield"><label>Cliente *</label><input id="fo-cliente" placeholder="Nome completo"></div>
-      <div class="mfield"><label>Vendedor</label><input id="fo-vendedor" readonly></div>
-      <div class="mfield" style="grid-column:1/-1"><label>Loja</label><input id="fo-loja" readonly></div>
-      <div class="mfield" style="grid-column:1/-1"><label>Observação</label><textarea id="fo-obs" placeholder="Detalhes adicionais…"></textarea></div>
+    <div class="modal-sub">Pedido de veículo fora do estoque</div>
+    <div class="mfield">
+      <label>Marca *</label>
+      <select id="fo-marca" style="width:100%;padding:9px 12px;background:var(--surface2);border:1.5px solid var(--border);border-radius:var(--r);font-family:inherit;font-size:13px;color:var(--text)">
+        <option value="">Selecione a marca…</option>
+        <option value="Toyota">Toyota</option>
+        <option value="Jeep">Jeep</option>
+        <option value="BYD">BYD</option>
+      </select>
     </div>
+    <div class="mfield"><label>Modelo *</label><input id="fo-modelo" placeholder="Ex: Corolla Cross, Compass, Song Plus…"></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem">
+      <div class="mfield"><label>Cor Externa</label><input id="fo-corext" placeholder="Ex: Branco"></div>
+      <div class="mfield"><label>Cor Interna</label><input id="fo-corint" placeholder="Ex: Preto"></div>
+    </div>
+    <div class="mfield"><label>Opcional</label><input id="fo-opcional" placeholder="Ex: Teto solar, pacote premium…"></div>
+    <div class="mfield"><label>Cliente *</label><input id="fo-cliente" placeholder="Nome completo do cliente"></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem">
+      <div class="mfield"><label>Vendedor</label><input id="fo-vendedor" readonly></div>
+      <div class="mfield"><label>Loja</label><input id="fo-loja" readonly></div>
+    </div>
+    <div class="mfield"><label>Observação</label><textarea id="fo-obs" placeholder="Detalhes adicionais, prazo, configuração especial…"></textarea></div>
     <div class="modal-actions">
       <button class="btn-cancel" onclick="closeModal('ov-fo')">Cancelar</button>
-      <button class="btn-ok-vnd" onclick="doFO()">Confirmar Firm Order</button>
+      <button class="btn-ok-vnd" onclick="doFO()">✓ Confirmar Firm Order</button>
     </div>
   </div>
 </div>
@@ -530,6 +535,11 @@ async function doLogin(){
     if(me.perfil==='administrador') $('th-cancelar').style.display='';
 
     loadEstoque();
+    // Esconde botão de nova FO para documentalista
+    if(me.perfil==='documentalista'){
+      const btn=$('btn-fo-new');
+      if(btn)btn.style.display='none';
+    }
   }catch(e){loginErr('Erro de conexão: '+e.message)}
 }
 function loginErr(msg){const el=$('l-err');el.textContent=msg;el.style.display='block'}
@@ -543,6 +553,7 @@ function doLogout(){
   $('l-user').value='';$('l-pass').value='';
   $('chip-perfil').innerHTML='';
   $('th-cancelar').style.display='none';
+  const foBtn=$('btn-fo-new');if(foBtn)foBtn.style.display='';
 }
 
 // ── TABS ──────────────────────────────────────────────────
@@ -997,30 +1008,30 @@ function renderFO(data){
 }
 
 function openFO(){
-  $('fo-marca').value='';$('fo-familia').value='';$('fo-modelo').value='';
-  $('fo-fabmod').value='';$('fo-corext').value='';$('fo-corint').value='';
-  $('fo-opcional').value='';$('fo-chassi').value='';$('fo-preco').value='';
-  $('fo-patio').value='';$('fo-cliente').value='';$('fo-obs').value='';
+  const perfil=me?.perfil||'vendedor';
+  if(perfil==='documentalista'){toast('Sem permissão para criar Firm Order.','err');return}
+  $('fo-marca').value='';$('fo-modelo').value='';
+  $('fo-corext').value='';$('fo-corint').value='';
+  $('fo-opcional').value='';$('fo-cliente').value='';$('fo-obs').value='';
   $('fo-vendedor').value=me?(me.nome||me.usuario):'';
   $('fo-loja').value=me?.loja||'';
   $('ov-fo').classList.add('open');
   setTimeout(()=>$('fo-marca').focus(),120);
 }
 async function doFO(){
-  const marca=$('fo-marca').value.trim();
+  const marca=$('fo-marca').value;
   const modelo=$('fo-modelo').value.trim();
   const cliente=$('fo-cliente').value.trim();
-  if(!marca||!modelo||!cliente){toast('Preencha Marca, Modelo e Cliente.','err');return}
+  if(!marca){toast('Selecione a marca.','err');return}
+  if(!modelo){toast('Informe o modelo.','err');return}
+  if(!cliente){toast('Informe o nome do cliente.','err');return}
   try{
     await db.insert(T_FO,{
-      marca,familia:$('fo-familia').value.trim(),modelo,
-      fab_mod:$('fo-fabmod').value.trim(),
+      marca,
+      modelo,
       cor_externa:$('fo-corext').value.trim(),
       cor_interna:$('fo-corint').value.trim(),
       opcional:$('fo-opcional').value.trim(),
-      chassi:$('fo-chassi').value.trim(),
-      preco:Number($('fo-preco').value)||null,
-      patio:$('fo-patio').value.trim(),
       cliente,
       vendedor:$('fo-vendedor').value.trim(),
       loja:$('fo-loja').value.trim(),
