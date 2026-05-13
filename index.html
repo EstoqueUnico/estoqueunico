@@ -679,8 +679,8 @@ function doLogout(){
 // ── TABS ──────────────────────────────────────────────────
 function goTab(tab){
   ['estoque','reservas','vendas','ranking','firmorder','admin'].forEach(t=>{
-    $('panel-'+t).style.display=t===tab?'block':'none';
-    $('tab-'+t).classList.toggle('active',t===tab);
+    const panel=$('panel-'+t); if(panel) panel.style.display=t===tab?'block':'none';
+    const tabEl=$('tab-'+t);   if(tabEl) tabEl.classList.toggle('active',t===tab);
   });
   if(tab==='reservas')loadReservas();
   if(tab==='vendas'&&!vendasAll.length)loadVendas();
@@ -1200,7 +1200,7 @@ function renderUsuarios(data){
   $('tbl-usr').style.display='';
   const pLabels={vendedor:'Vendedor',documentalista:'Documentalista',administrador:'Administrador'};
   const pClass={vendedor:'pb-vendedor',documentalista:'pb-documentalista',administrador:'pb-administrador'};
-  data.forEach(r=>{
+  data.forEach((r,i)=>{
     const isSelf = me && r.id === me.id;
     const tr=document.createElement('tr');
     tr.innerHTML=`
@@ -1209,9 +1209,12 @@ function renderUsuarios(data){
       <td><span class="perfil-badge ${pClass[r.perfil]||'pb-vendedor'}">${pLabels[r.perfil]||r.perfil||'vendedor'}</span></td>
       <td>${r.loja||'—'}</td>
       <td><div class="acts">
-        <button class="btn-edit" onclick='openUsuario(${JSON.stringify(r)})'>Editar</button>
-        ${isSelf?'':'<button class="btn-del" onclick="excluirUsuario(''+r.id+'',''+esc(r.nome||r.usuario)+'')">Excluir</button>'}
+        <button class="btn-edit" data-idx="${i}">Editar</button>
+        ${isSelf?'':'<button class="btn-del" data-id="'+r.id+'" data-nome="'+esc(r.nome||r.usuario)+'">Excluir</button>'}
       </div></td>`;
+    tr.querySelector('.btn-edit').addEventListener('click',()=>openUsuario(data[i]));
+    const delBtn=tr.querySelector('.btn-del');
+    if(delBtn) delBtn.addEventListener('click',()=>excluirUsuario(r.id,r.nome||r.usuario));
     tbody.appendChild(tr);
   });
 }
