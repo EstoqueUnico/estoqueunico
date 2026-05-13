@@ -70,7 +70,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 .stat-card b{font-size:15px;font-weight:600;margin-right:4px}
 
 /* FILTERBAR */
-.filterbar{display:flex;gap:.5rem;flex-wrap:nowrap;margin-bottom:1rem;align-items:center;overflow-x:auto;padding-bottom:2px}
+.filterbar{display:flex;gap:.5rem;flex-wrap:nowrap;margin-bottom:1rem;align-items:center;overflow-x:auto;padding-bottom:2px;position:sticky;top:56px;z-index:80;background:var(--bg);padding-top:.75rem;padding-bottom:.75rem;margin-left:-2rem;margin-right:-2rem;padding-left:2rem;padding-right:2rem;border-bottom:1px solid var(--border);}
 .f-input,.f-select{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--r);padding:7px 11px;font-family:inherit;font-size:13px;color:var(--text);transition:border-color .15s,box-shadow .15s}
 .f-input{flex:1;min-width:180px}
 .f-input:focus,.f-select:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px var(--blue-bg)}
@@ -134,6 +134,37 @@ td{padding:11px 16px;font-size:13.5px;vertical-align:middle}
 .btn-cancel{padding:10px 16px;background:none;border:1.5px solid var(--border);color:var(--text2);border-radius:var(--r);font-family:inherit;font-size:13px;cursor:pointer;transition:border-color .15s}
 .btn-cancel:hover{border-color:var(--text2)}
 
+/* RANKING */
+.ranking-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.rank-card-wide{grid-column:1/-1}
+.rank-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);padding:1.25rem;box-shadow:var(--shadow)}
+.rank-card-title{font-size:14px;font-weight:600;margin-bottom:1rem;color:var(--text)}
+.rank-row{display:flex;align-items:center;gap:.75rem;padding:8px 0;border-bottom:1px solid var(--border)}
+.rank-row:last-child{border-bottom:none}
+.rank-pos{font-family:'DM Mono',monospace;font-size:12px;font-weight:600;color:var(--text3);width:24px;text-align:center;flex-shrink:0}
+.rank-pos.gold{color:#b8860b}
+.rank-pos.silver{color:#808080}
+.rank-pos.bronze{color:#8b4513}
+.rank-name{flex:1;font-size:13.5px;font-weight:500}
+.rank-sub{font-size:11.5px;color:var(--text2)}
+.rank-bar-wrap{width:120px;height:6px;background:var(--surface2);border-radius:99px;overflow:hidden;flex-shrink:0}
+.rank-bar{height:100%;background:var(--blue);border-radius:99px;transition:width .4s ease}
+.rank-count{font-family:'DM Mono',monospace;font-size:12px;font-weight:600;color:var(--blue);width:32px;text-align:right;flex-shrink:0}
+
+/* FIRM ORDER BUTTON */
+.btn-fo-new{padding:7px 14px;background:var(--blue);color:#fff;border:none;border-radius:var(--r);font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;transition:background .15s;white-space:nowrap}
+.btn-fo-new:hover{background:var(--blue2)}
+
+@media(max-width:900px){.ranking-grid{grid-template-columns:1fr}.rank-card-wide{grid-column:auto}}
+
+/* SORTABLE HEADERS */
+thead th{cursor:pointer;user-select:none;transition:background .1s}
+thead th:hover{background:var(--border)}
+thead th.sort-asc::after{content:' ↑';color:var(--blue);font-size:10px}
+thead th.sort-desc::after{content:' ↓';color:var(--blue);font-size:10px}
+thead th.no-sort{cursor:default}
+thead th.no-sort:hover{background:var(--surface2)}
+
 /* PLACEHOLDER / LOADING */
 .placeholder{text-align:center;padding:3.5rem 1rem;color:var(--text3);font-size:13.5px}
 .spinner{display:inline-block;width:20px;height:20px;border:2px solid var(--border);border-top-color:var(--blue);border-radius:50%;animation:spin .7s linear infinite;margin-bottom:.75rem}
@@ -194,6 +225,8 @@ td{padding:11px 16px;font-size:13.5px;vertical-align:middle}
     <button class="tab-btn active" onclick="goTab('estoque')"  id="tab-estoque">Estoque  <span class="tab-pill" id="n-estoque">0</span></button>
     <button class="tab-btn"        onclick="goTab('reservas')" id="tab-reservas">Reservas <span class="tab-pill" id="n-reservas">0</span></button>
     <button class="tab-btn"        onclick="goTab('vendas')"   id="tab-vendas">Vendas   <span class="tab-pill" id="n-vendas">0</span></button>
+    <button class="tab-btn"        onclick="goTab('ranking')"  id="tab-ranking">Ranking</button>
+    <button class="tab-btn"        onclick="goTab('firmorder')" id="tab-firmorder">Firm Order <span class="tab-pill" id="n-fo">0</span></button>
   </div>
 
   <div class="main">
@@ -219,9 +252,17 @@ td{padding:11px 16px;font-size:13.5px;vertical-align:middle}
         <div class="table-scroll">
           <table id="tbl-estoque" style="display:none">
             <thead><tr>
-              <th>Marca / Família</th><th>Modelo</th><th>Pátio</th>
-              <th>Cor Externa</th><th>Cor Interna</th><th>Opcional</th>
-              <th>Fab/Mod</th><th>Chassi</th><th>Preço</th><th>Status</th><th>Ações</th>
+              <th onclick="sortBy('estoque','marca',this)">Marca / Família</th>
+              <th onclick="sortBy('estoque','modelo',this)">Modelo</th>
+              <th onclick="sortBy('estoque','patio',this)">Pátio</th>
+              <th onclick="sortBy('estoque','cor_externa',this)">Cor Externa</th>
+              <th onclick="sortBy('estoque','cor_interna',this)">Cor Interna</th>
+              <th onclick="sortBy('estoque','opcional',this)">Opcional</th>
+              <th onclick="sortBy('estoque','fab_mod',this)">Fab/Mod</th>
+              <th onclick="sortBy('estoque','chassi',this)">Chassi</th>
+              <th onclick="sortBy('estoque','preco',this)">Preço</th>
+              <th onclick="sortBy('estoque','status',this)">Status</th>
+              <th class="no-sort">Ações</th>
             </tr></thead>
             <tbody id="body-estoque"></tbody>
           </table>
@@ -240,8 +281,14 @@ td{padding:11px 16px;font-size:13.5px;vertical-align:middle}
         <div class="table-scroll">
           <table id="tbl-reservas" style="display:none">
             <thead><tr>
-              <th>Veículo</th><th>Chassi</th><th>Cliente</th><th>Vendedor</th><th>Loja</th>
-              <th>Reservado em</th><th>Tempo restante</th><th>Ações</th>
+              <th onclick="sortBy('reservas','veiculo',this)">Veículo</th>
+              <th onclick="sortBy('reservas','chassi',this)">Chassi</th>
+              <th onclick="sortBy('reservas','cliente',this)">Cliente</th>
+              <th onclick="sortBy('reservas','vendedor',this)">Vendedor</th>
+              <th onclick="sortBy('reservas','loja',this)">Loja</th>
+              <th onclick="sortBy('reservas','criado',this)">Reservado em</th>
+              <th class="no-sort">Tempo restante</th>
+              <th class="no-sort">Ações</th>
             </tr></thead>
             <tbody id="body-reservas"></tbody>
           </table>
@@ -260,12 +307,73 @@ td{padding:11px 16px;font-size:13.5px;vertical-align:middle}
         <div class="table-scroll">
           <table id="tbl-vendas" style="display:none">
             <thead><tr>
-              <th>Veículo</th><th>Chassi</th><th>Cliente</th><th>Vendedor</th>
-              <th>Loja</th><th>Vendido em</th><th>Observação</th><th id="th-cancelar" style="display:none">Admin</th>
+              <th onclick="sortBy('vendas','veiculo',this)">Veículo</th>
+              <th onclick="sortBy('vendas','chassi',this)">Chassi</th>
+              <th onclick="sortBy('vendas','cliente',this)">Cliente</th>
+              <th onclick="sortBy('vendas','vendedor',this)">Vendedor</th>
+              <th onclick="sortBy('vendas','loja',this)">Loja</th>
+              <th onclick="sortBy('vendas','data',this)">Vendido em</th>
+              <th class="no-sort">Observação</th>
+              <th id="th-cancelar" class="no-sort" style="display:none">Admin</th>
             </tr></thead>
             <tbody id="body-vendas"></tbody>
           </table>
           <div class="placeholder" id="ph-vendas"><div class="spinner"></div><br>Carregando…</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RANKING -->
+    <div id="panel-ranking" style="display:none">
+      <div class="filterbar">
+        <button class="btn-refresh" onclick="loadRanking()">↻ Atualizar</button>
+      </div>
+      <div class="ranking-grid">
+        <!-- Vendedores -->
+        <div class="rank-card">
+          <div class="rank-card-title">🏆 Top Vendedores</div>
+          <div id="rank-vendedores"><div class="placeholder">Carregando…</div></div>
+        </div>
+        <!-- Lojas -->
+        <div class="rank-card">
+          <div class="rank-card-title">🏢 Top Lojas</div>
+          <div id="rank-lojas"><div class="placeholder">Carregando…</div></div>
+        </div>
+        <!-- Marca/Modelo -->
+        <div class="rank-card rank-card-wide">
+          <div class="rank-card-title">🚗 Vendas por Marca / Modelo</div>
+          <div id="rank-modelos"><div class="placeholder">Carregando…</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FIRM ORDER -->
+    <div id="panel-firmorder" style="display:none">
+      <div class="filterbar">
+        <input class="f-input" id="f-q-fo" placeholder="Buscar por cliente, modelo, chassi…" oninput="filterFO()">
+        <button class="btn-refresh" onclick="loadFO()">↻ Atualizar</button>
+        <button class="btn-fo-new" onclick="openFO()">+ Nova Firm Order</button>
+      </div>
+      <div class="table-card">
+        <div class="table-scroll">
+          <table id="tbl-fo" style="display:none">
+            <thead><tr>
+              <th onclick="sortBy('fo','criado',this)">Data</th>
+              <th onclick="sortBy('fo','marca',this)">Marca / Família</th>
+              <th onclick="sortBy('fo','modelo',this)">Modelo</th>
+              <th onclick="sortBy('fo','cor_externa',this)">Cor Externa</th>
+              <th onclick="sortBy('fo','cor_interna',this)">Cor Interna</th>
+              <th onclick="sortBy('fo','opcional',this)">Opcional</th>
+              <th onclick="sortBy('fo','fab_mod',this)">Fab/Mod</th>
+              <th onclick="sortBy('fo','chassi',this)">Chassi</th>
+              <th onclick="sortBy('fo','cliente',this)">Cliente</th>
+              <th onclick="sortBy('fo','vendedor',this)">Vendedor</th>
+              <th onclick="sortBy('fo','loja',this)">Loja</th>
+              <th class="no-sort">Obs</th>
+            </tr></thead>
+            <tbody id="body-fo"></tbody>
+          </table>
+          <div class="placeholder" id="ph-fo"><div class="spinner"></div><br>Carregando…</div>
         </div>
       </div>
     </div>
@@ -316,6 +424,34 @@ td{padding:11px 16px;font-size:13.5px;vertical-align:middle}
     <div class="modal-actions">
       <button class="btn-cancel" onclick="closeModal('ov-cancel-vnd')">Voltar</button>
       <button class="btn-ok-red" onclick="doCancelarVenda()">Cancelar venda</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL FIRM ORDER -->
+<div class="overlay" id="ov-fo">
+  <div class="modal" style="max-width:600px">
+    <div class="modal-title">Nova Firm Order</div>
+    <div class="modal-sub">Venda de veículo fora do estoque</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem">
+      <div class="mfield"><label>Marca *</label><input id="fo-marca" placeholder="Ex: BYD"></div>
+      <div class="mfield"><label>Família</label><input id="fo-familia" placeholder="Ex: BYD - SONG PLUS"></div>
+      <div class="mfield"><label>Modelo *</label><input id="fo-modelo" placeholder="Ex: I/BYD SONG PLUS"></div>
+      <div class="mfield"><label>Fab/Mod</label><input id="fo-fabmod" placeholder="Ex: 24/25"></div>
+      <div class="mfield"><label>Cor Externa</label><input id="fo-corext" placeholder="Ex: AZUL"></div>
+      <div class="mfield"><label>Cor Interna</label><input id="fo-corint" placeholder="Ex: PRETO"></div>
+      <div class="mfield"><label>Opcional</label><input id="fo-opcional" placeholder="Ex: Teto solar"></div>
+      <div class="mfield"><label>Chassi</label><input id="fo-chassi" placeholder="Opcional"></div>
+      <div class="mfield"><label>Preço</label><input id="fo-preco" type="number" placeholder="0.00"></div>
+      <div class="mfield"><label>Pátio</label><input id="fo-patio" placeholder="Ex: BYD Goiânia"></div>
+      <div class="mfield"><label>Cliente *</label><input id="fo-cliente" placeholder="Nome completo"></div>
+      <div class="mfield"><label>Vendedor</label><input id="fo-vendedor" readonly></div>
+      <div class="mfield" style="grid-column:1/-1"><label>Loja</label><input id="fo-loja" readonly></div>
+      <div class="mfield" style="grid-column:1/-1"><label>Observação</label><textarea id="fo-obs" placeholder="Detalhes adicionais…"></textarea></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeModal('ov-fo')">Cancelar</button>
+      <button class="btn-ok-vnd" onclick="doFO()">Confirmar Firm Order</button>
     </div>
   </div>
 </div>
@@ -411,12 +547,14 @@ function doLogout(){
 
 // ── TABS ──────────────────────────────────────────────────
 function goTab(tab){
-  ['estoque','reservas','vendas'].forEach(t=>{
+  ['estoque','reservas','vendas','ranking','firmorder'].forEach(t=>{
     $('panel-'+t).style.display=t===tab?'block':'none';
     $('tab-'+t).classList.toggle('active',t===tab);
   });
   if(tab==='reservas')loadReservas();
   if(tab==='vendas'&&!vendasAll.length)loadVendas();
+  if(tab==='ranking')loadRanking();
+  if(tab==='firmorder'&&!foAll.length)loadFO();
 }
 
 // ── ESTOQUE ───────────────────────────────────────────────
@@ -430,6 +568,34 @@ async function loadEstoque(){
     filterEstoque();
     updateCounts();
   }catch(e){toast('Erro ao carregar estoque: '+e.message,'err');hidePH('estoque')}
+}
+
+// ── SORT STATE ───────────────────────────────────────────
+const sortState = { estoque: { col: null, dir: 1 }, reservas: { col: null, dir: 1 }, vendas: { col: null, dir: 1 }, fo: { col: null, dir: 1 } };
+
+function sortBy(table, col, th) {
+  const st = sortState[table];
+  if (st.col === col) { st.dir *= -1; }
+  else { st.col = col; st.dir = 1; }
+  // Update header classes
+  document.querySelectorAll(`#tbl-${table} thead th`).forEach(el => el.classList.remove('sort-asc','sort-desc'));
+  th.classList.add(st.dir === 1 ? 'sort-asc' : 'sort-desc');
+  // Re-render
+  if (table === 'estoque')  filterEstoque();
+  if (table === 'reservas') filterReservas();
+  if (table === 'vendas')   filterVendas();
+}
+
+function applySortForRender(data, table) {
+  const st = sortState[table];
+  if (!st.col) return data;
+  return [...data].sort((a, b) => {
+    let va = a[st.col] ?? '', vb = b[st.col] ?? '';
+    // Numeric sort for price
+    if (st.col === 'preco') { va = Number(va)||0; vb = Number(vb)||0; }
+    else { va = String(va).toLowerCase(); vb = String(vb).toLowerCase(); }
+    return va < vb ? -st.dir : va > vb ? st.dir : 0;
+  });
 }
 
 function populateFilters(data){
@@ -456,7 +622,7 @@ function filterEstoque(){
     return(!q||hay.includes(q))&&(!ma||r.marca===ma)&&(!fa||r.familia===fa)
       &&(!mo||r.modelo===mo)&&(!co||r.cor_externa===co)&&(!st||r.status===st);
   });
-  renderEstoque(data);
+  renderEstoque(applySortForRender(data,'estoque'));
   const disp=estoqueAll.filter(r=>r.status==='disponivel').length;
   const res =estoqueAll.filter(r=>r.status==='reservado').length;
   const vnd =estoqueAll.filter(r=>r.status==='vendido').length;
@@ -535,7 +701,7 @@ async function loadReservas(){
 }
 function filterReservas(){
   const q=$('f-q-res').value.toLowerCase();
-  renderReservas(reservasAll.filter(r=>!q||[r.veiculo,r.chassi,r.cliente,r.vendedor,r.loja].join(' ').toLowerCase().includes(q)));
+  renderReservas(applySortForRender(reservasAll.filter(r=>!q||[r.veiculo,r.chassi,r.cliente,r.vendedor,r.loja].join(' ').toLowerCase().includes(q)),'reservas'));
 }
 function renderReservas(data){
   hidePH('reservas');
@@ -601,7 +767,7 @@ async function loadVendas(){
 }
 function filterVendas(){
   const q=$('f-q-vnd').value.toLowerCase();
-  renderVendas(vendasAll.filter(r=>!q||[r.veiculo,r.chassi,r.cliente,r.vendedor,r.loja].join(' ').toLowerCase().includes(q)));
+  renderVendas(applySortForRender(vendasAll.filter(r=>!q||[r.veiculo,r.chassi,r.cliente,r.vendedor,r.loja].join(' ').toLowerCase().includes(q)),'vendas'));
 }
 function renderVendas(data){
   hidePH('vendas');
@@ -729,6 +895,142 @@ async function doCancelarVenda(){
 }
 
 function closeModal(id){$(id).classList.remove('open')}
+
+// ── RANKING ──────────────────────────────────────────────
+async function loadRanking(){
+  $('rank-vendedores').innerHTML='<div class="placeholder">Carregando…</div>';
+  $('rank-lojas').innerHTML='<div class="placeholder">Carregando…</div>';
+  $('rank-modelos').innerHTML='<div class="placeholder">Carregando…</div>';
+  try{
+    // Busca vendas + firm orders juntas para ranking completo
+    const [vendas, fos] = await Promise.all([
+      db.select(T_VENDAS,'?order=data.desc'),
+      db.select('firm_orders','?order=criado.desc'),
+    ]);
+    const todas=[...(vendas||[]),...(fos||[])].filter(r=>!r.loja||!r.loja.startsWith('[CANCELADO]'));
+    renderRanking(todas);
+  }catch(e){
+    $('rank-vendedores').innerHTML='<div class="placeholder">Erro ao carregar.</div>';
+    $('rank-lojas').innerHTML='';$('rank-modelos').innerHTML='';
+  }
+}
+
+function renderRanking(data){
+  // Por vendedor
+  const byVnd={};
+  data.forEach(r=>{const k=r.vendedor||'—';byVnd[k]=(byVnd[k]||0)+1});
+  renderRankList('rank-vendedores',byVnd,'venda');
+
+  // Por loja
+  const byLoja={};
+  data.forEach(r=>{const k=(r.loja||'—').replace('[CANCELADO] ','');byLoja[k]=(byLoja[k]||0)+1});
+  renderRankList('rank-lojas',byLoja,'venda');
+
+  // Por marca+modelo
+  const byMod={};
+  data.forEach(r=>{
+    const k=(r.marca||'—')+' · '+(r.modelo||'—');
+    byMod[k]=(byMod[k]||0)+1;
+  });
+  renderRankList('rank-modelos',byMod,'venda',true);
+}
+
+function renderRankList(elId,obj,unit,wide=false){
+  const sorted=Object.entries(obj).sort((a,b)=>b[1]-a[1]).slice(0,wide?15:10);
+  if(!sorted.length){$(elId).innerHTML='<div class="placeholder">Sem dados.</div>';return}
+  const max=sorted[0][1];
+  const medals=['🥇','🥈','🥉'];
+  const posClass=['gold','silver','bronze'];
+  $(elId).innerHTML=sorted.map(([name,count],i)=>`
+    <div class="rank-row">
+      <div class="rank-pos ${posClass[i]||''}">${medals[i]||i+1}</div>
+      <div class="rank-name">${name}<br><span class="rank-sub">${count} ${unit}${count>1?'s':''}</span></div>
+      <div class="rank-bar-wrap"><div class="rank-bar" style="width:${Math.round(count/max*100)}%"></div></div>
+      <div class="rank-count">${count}</div>
+    </div>`).join('');
+}
+
+// ── FIRM ORDER ────────────────────────────────────────────
+let foAll=[];
+const T_FO='firm_orders';
+
+async function loadFO(){
+  showPH('fo');
+  try{
+    const rows=await db.select(T_FO,'?order=criado.desc');
+    foAll=rows||[];
+    $('n-fo').textContent=foAll.length;
+    filterFO();
+  }catch(e){toast('Erro ao carregar Firm Orders: '+e.message,'err');hidePH('fo')}
+}
+function filterFO(){
+  const q=$('f-q-fo').value.toLowerCase();
+  const data=foAll.filter(r=>!q||[r.marca,r.modelo,r.cliente,r.vendedor,r.chassi,r.loja].join(' ').toLowerCase().includes(q));
+  renderFO(applySortForRender(data,'fo'));
+}
+function renderFO(data){
+  hidePH('fo');
+  const tbody=$('body-fo');tbody.innerHTML='';
+  if(!data.length){
+    $('tbl-fo').style.display='none';
+    $('ph-fo').innerHTML='Nenhuma Firm Order registrada.';
+    $('ph-fo').style.display='block';return;
+  }
+  $('tbl-fo').style.display='';
+  data.forEach(r=>{
+    const tr=document.createElement('tr');
+    tr.innerHTML=`
+      <td class="mono">${fmtDate(r.criado)}</td>
+      <td><strong>${r.marca||'—'}</strong><br><span style="font-size:12px;color:var(--text2)">${r.familia||''}</span></td>
+      <td>${r.modelo||'—'}</td>
+      <td>${r.cor_externa||'—'}</td>
+      <td>${r.cor_interna||'—'}</td>
+      <td>${r.opcional||'—'}</td>
+      <td class="mono">${r.fab_mod||'—'}</td>
+      <td class="mono">${r.chassi||'—'}</td>
+      <td>${r.cliente||'—'}</td>
+      <td>${r.vendedor||'—'}</td>
+      <td>${r.loja||'—'}</td>
+      <td style="max-width:160px;font-size:12px;color:var(--text2)">${r.obs||'—'}</td>`;
+    tbody.appendChild(tr);
+  });
+}
+
+function openFO(){
+  $('fo-marca').value='';$('fo-familia').value='';$('fo-modelo').value='';
+  $('fo-fabmod').value='';$('fo-corext').value='';$('fo-corint').value='';
+  $('fo-opcional').value='';$('fo-chassi').value='';$('fo-preco').value='';
+  $('fo-patio').value='';$('fo-cliente').value='';$('fo-obs').value='';
+  $('fo-vendedor').value=me?(me.nome||me.usuario):'';
+  $('fo-loja').value=me?.loja||'';
+  $('ov-fo').classList.add('open');
+  setTimeout(()=>$('fo-marca').focus(),120);
+}
+async function doFO(){
+  const marca=$('fo-marca').value.trim();
+  const modelo=$('fo-modelo').value.trim();
+  const cliente=$('fo-cliente').value.trim();
+  if(!marca||!modelo||!cliente){toast('Preencha Marca, Modelo e Cliente.','err');return}
+  try{
+    await db.insert(T_FO,{
+      marca,familia:$('fo-familia').value.trim(),modelo,
+      fab_mod:$('fo-fabmod').value.trim(),
+      cor_externa:$('fo-corext').value.trim(),
+      cor_interna:$('fo-corint').value.trim(),
+      opcional:$('fo-opcional').value.trim(),
+      chassi:$('fo-chassi').value.trim(),
+      preco:Number($('fo-preco').value)||null,
+      patio:$('fo-patio').value.trim(),
+      cliente,
+      vendedor:$('fo-vendedor').value.trim(),
+      loja:$('fo-loja').value.trim(),
+      obs:$('fo-obs').value.trim(),
+      criado:new Date().toISOString(),
+    });
+    toast('Firm Order registrada com sucesso!','ok');
+    closeModal('ov-fo');foAll=[];loadFO();loadRanking();
+  }catch(e){toast('Erro: '+e.message,'err')}
+}
 
 // ── UTILS ─────────────────────────────────────────────────
 function updateCounts(){
