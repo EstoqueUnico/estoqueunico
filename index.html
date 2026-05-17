@@ -153,6 +153,8 @@ td{padding:11px 16px;font-size:13.5px;vertical-align:middle}
 
 /* FIRM ORDER BUTTON */
 .btn-fo-new{padding:7px 14px;background:var(--blue);color:#fff;border:none;border-radius:var(--r);font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;transition:background .15s;white-space:nowrap}
+.btn-export{padding:7px 12px;background:var(--green-bg);border:1.5px solid var(--green-bd);color:var(--green);border-radius:var(--r);font-family:inherit;font-size:13px;font-weight:500;cursor:pointer;transition:opacity .15s;white-space:nowrap}
+.btn-export:hover{opacity:.75}
 .btn-fo-new:hover{background:var(--blue2)}
 
 /* SUBTABS */
@@ -252,7 +254,7 @@ thead th.no-sort:hover{background:var(--surface2)}
     <button class="tab-btn"        onclick="goTab('reservas')" id="tab-reservas">Reservas <span class="tab-pill" id="n-reservas">0</span></button>
     <button class="tab-btn"        onclick="goTab('vendas')"   id="tab-vendas">Vendas   <span class="tab-pill" id="n-vendas">0</span></button>
     <button class="tab-btn"        onclick="goTab('ranking')"  id="tab-ranking">Ranking</button>
-    <button class="tab-btn"        onclick="goTab('firmorder')" id="tab-firmorder">Firm Order <span class="tab-pill" id="n-fo">0</span></button>
+    <button class="tab-btn"        onclick="goTab('firmorder')" id="tab-firmorder">Venda sem Estoque <span class="tab-pill" id="n-fo">0</span></button>
     <button class="tab-btn" onclick="goTab('admin')" id="tab-admin" style="display:none;color:var(--amber)">⚙ Admin</button>
   </div>
 
@@ -329,6 +331,7 @@ thead th.no-sort:hover{background:var(--surface2)}
       <div class="filterbar">
         <input class="f-input" id="f-q-vnd" placeholder="Buscar veículo, cliente, vendedor, loja…" oninput="filterVendas()">
         <button class="btn-refresh" onclick="loadVendas()">↻ Atualizar</button>
+        <button class="btn-export" onclick="exportExcel('vendas')">⬇ Excel</button>
       </div>
       <div class="table-card">
         <div class="table-scroll">
@@ -379,13 +382,15 @@ thead th.no-sort:hover{background:var(--surface2)}
       <div class="filterbar">
         <input class="f-input" id="f-q-fo" placeholder="Buscar por cliente, modelo, chassi…" oninput="filterFO()">
         <button class="btn-refresh" onclick="loadFO()">↻ Atualizar</button>
-        <button class="btn-fo-new" id="btn-fo-new" onclick="openFO()">+ Nova Firm Order</button>
+        <button class="btn-export" onclick="exportExcel('fo')">⬇ Excel</button>
+        <button class="btn-fo-new" id="btn-fo-new" onclick="openFO()">+ Nova Venda sem Estoque</button>
       </div>
       <div class="table-card">
         <div class="table-scroll">
           <table id="tbl-fo" style="display:none">
             <thead><tr>
               <th onclick="sortBy('fo','criado',this)">Data</th>
+              <th onclick="sortBy('fo','tipo',this)">Tipo</th>
               <th onclick="sortBy('fo','marca',this)">Marca / Família</th>
               <th onclick="sortBy('fo','modelo',this)">Modelo</th>
               <th onclick="sortBy('fo','cor_externa',this)">Cor Externa</th>
@@ -546,8 +551,15 @@ thead th.no-sort:hover{background:var(--surface2)}
 <!-- MODAL FIRM ORDER -->
 <div class="overlay" id="ov-fo">
   <div class="modal" style="max-width:520px">
-    <div class="modal-title">Nova Firm Order</div>
-    <div class="modal-sub">Pedido de veículo fora do estoque</div>
+    <div class="modal-title">Nova Venda sem Estoque</div>
+    <div class="modal-sub">Registre uma Firm Order ou Venda Direta</div>
+    <div class="mfield">
+      <label>Tipo *</label>
+      <select id="fo-tipo" style="width:100%;padding:9px 12px;background:var(--surface2);border:1.5px solid var(--border);border-radius:var(--r);font-family:inherit;font-size:13px;color:var(--text)">
+        <option value="Firm Order">Firm Order</option>
+        <option value="Venda Direta">Venda Direta</option>
+      </select>
+    </div>
     <div class="mfield">
       <label>Marca *</label>
       <select id="fo-marca" style="width:100%;padding:9px 12px;background:var(--surface2);border:1.5px solid var(--border);border-radius:var(--r);font-family:inherit;font-size:13px;color:var(--text)">
@@ -1123,6 +1135,7 @@ function renderFO(data){
     const tr=document.createElement('tr');
     tr.innerHTML=`
       <td class="mono">${fmtDate(r.criado)}</td>
+      <td><span class="badge ${r.tipo==='Venda Direta'?'badge-disp':'badge-res'}">${r.tipo||'Firm Order'}</span></td>
       <td><strong>${r.marca||'—'}</strong><br><span style="font-size:12px;color:var(--text2)">${r.familia||''}</span></td>
       <td>${r.modelo||'—'}</td>
       <td>${r.cor_externa||'—'}</td>
@@ -1141,6 +1154,7 @@ function renderFO(data){
 function openFO(){
   const perfil=me?.perfil||'vendedor';
   if(perfil==='documentalista'){toast('Sem permissão para criar Firm Order.','err');return}
+  $('fo-tipo').value='Firm Order';
   $('fo-marca').value='';$('fo-modelo').value='';
   $('fo-corext').value='';$('fo-corint').value='';
   $('fo-opcional').value='';$('fo-cliente').value='';$('fo-obs').value='';
@@ -1158,6 +1172,7 @@ async function doFO(){
   if(!cliente){toast('Informe o nome do cliente.','err');return}
   try{
     await db.insert(T_FO,{
+      tipo:$('fo-tipo').value,
       marca,
       modelo,
       cor_externa:$('fo-corext').value.trim(),
@@ -1352,6 +1367,35 @@ async function confirmarImport(){
 }
 
 // ── UTILS ─────────────────────────────────────────────────
+function exportExcel(source){
+  var rows=[],filename="",headers=[];
+  if(source==="vendas"){
+    filename="vendas.csv";
+    headers=["Veiculo","Chassi","Cliente","Vendedor","Loja","Data","Observacao"];
+    rows=vendasAll.map(function(r){
+      return[r.veiculo||"",r.chassi||"",r.cliente||"",r.vendedor||"",
+        (r.loja||"").replace("[CANCELADO] ",""),fmtDate(r.data),r.obs||""];
+    });
+  } else {
+    filename="venda_sem_estoque.csv";
+    headers=["Data","Tipo","Marca","Modelo","Cor Externa","Cor Interna","Opcional","Cliente","Vendedor","Loja","Observacao"];
+    rows=foAll.map(function(r){
+      return[fmtDate(r.criado),r.tipo||"Firm Order",r.marca||"",r.modelo||"",
+        r.cor_externa||"",r.cor_interna||"",r.opcional||"",
+        r.cliente||"",r.vendedor||"",r.loja||"",r.obs||""];
+    });
+  }
+  if(!rows.length){toast("Nenhum dado para exportar.","err");return;}
+  function q(v){return '"'+String(v).replace(/"/g,'""')+'"';}
+  var lines=[headers.map(q).join(",")];
+  for(var i=0;i<rows.length;i++){lines.push(rows[i].map(q).join(","));}
+  var sep=String.fromCharCode(13)+String.fromCharCode(10);
+  var bom=String.fromCharCode(0xFEFF);
+  var blob=new Blob([bom+lines.join(sep)],{type:"text/csv;charset=utf-8;"});
+  var a=document.createElement("a");
+  a.href=URL.createObjectURL(blob);a.download=filename;a.click();
+  toast("Exportado com sucesso!","ok");
+}
 function updateCounts(){
   $('n-estoque').textContent =estoqueAll.filter(r=>r.status==='disponivel').length;
   $('n-reservas').textContent=estoqueAll.filter(r=>r.status==='reservado').length;
