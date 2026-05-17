@@ -330,6 +330,11 @@ thead th.no-sort:hover{background:var(--surface2)}
     <div id="panel-vendas" style="display:none">
       <div class="filterbar">
         <input class="f-input" id="f-q-vnd" placeholder="Buscar veículo, cliente, vendedor, loja…" oninput="filterVendas()">
+        <select class="f-select" id="f-status-vnd" onchange="filterVendas()" style="min-width:140px">
+          <option value="ativas">Vendas ativas</option>
+          <option value="">Todas</option>
+          <option value="canceladas">Canceladas</option>
+        </select>
         <button class="btn-refresh" onclick="loadVendas()">↻ Atualizar</button>
         <button class="btn-export" onclick="exportExcel('vendas')">⬇ Excel</button>
       </div>
@@ -355,28 +360,34 @@ thead th.no-sort:hover{background:var(--surface2)}
 
     <!-- RANKING -->
     <div id="panel-ranking" style="display:none">
-      <div class="filterbar">
+      <div class="filterbar" style="flex-wrap:wrap">
+        <label style="font-size:12px;color:var(--text2);font-weight:500;white-space:nowrap">De:</label>
+        <input type="date" class="f-input" id="rank-de" style="flex:0 1 150px;min-width:140px" onchange="loadRanking()">
+        <label style="font-size:12px;color:var(--text2);font-weight:500;white-space:nowrap">Até:</label>
+        <input type="date" class="f-input" id="rank-ate" style="flex:0 1 150px;min-width:140px" onchange="loadRanking()">
+        <button class="btn-refresh" onclick="clearRankDates()">Limpar datas</button>
         <button class="btn-refresh" onclick="loadRanking()">↻ Atualizar</button>
       </div>
+      <div class="stats-row" id="rank-totais" style="margin-bottom:1rem"></div>
       <div class="ranking-grid">
-        <!-- Vendedores -->
         <div class="rank-card">
           <div class="rank-card-title">🏆 Top Vendedores</div>
           <div id="rank-vendedores"><div class="placeholder">Carregando…</div></div>
         </div>
-        <!-- Lojas -->
         <div class="rank-card">
           <div class="rank-card-title">🏢 Top Lojas</div>
           <div id="rank-lojas"><div class="placeholder">Carregando…</div></div>
         </div>
-        <!-- Marca/Modelo -->
         <div class="rank-card rank-card-wide">
           <div class="rank-card-title">🚗 Vendas por Marca / Modelo</div>
           <div id="rank-modelos"><div class="placeholder">Carregando…</div></div>
         </div>
+        <div class="rank-card rank-card-wide">
+          <div class="rank-card-title">📅 Vendas por Dia</div>
+          <div id="rank-dias"><div class="placeholder">Carregando…</div></div>
+        </div>
       </div>
     </div>
-
     <!-- FIRM ORDER -->
     <div id="panel-firmorder" style="display:none">
       <div class="filterbar">
@@ -921,7 +932,14 @@ async function loadVendas(){
 }
 function filterVendas(){
   const q=$('f-q-vnd').value.toLowerCase();
-  renderVendas(applySortForRender(vendasAll.filter(r=>!q||[r.veiculo,r.chassi,r.cliente,r.vendedor,r.loja].join(' ').toLowerCase().includes(q)),'vendas'));
+  const st=$('f-status-vnd').value;
+  const filtered=vendasAll.filter(function(r){
+    const cancelado=r.loja&&r.loja.startsWith('[CANCELADO]');
+    const matchQ=!q||[r.veiculo,r.chassi,r.cliente,r.vendedor,r.loja].join(' ').toLowerCase().includes(q);
+    const matchSt=st===''?true:st==='canceladas'?cancelado:!cancelado;
+    return matchQ&&matchSt;
+  });
+  renderVendas(applySortForRender(filtered,'vendas'));
 }
 function renderVendas(data){
   hidePH('vendas');
@@ -1050,60 +1068,117 @@ async function doCancelarVenda(){
 
 function closeModal(id){$(id).classList.remove('open')}
 
-// ── RANKING ──────────────────────────────────────────────
+// ── RANKING ──────────────────────────────────────────
+function clearRankDates(){
+  $('rank-de').value='';
+  $('rank-ate').value='';
+  loadRanking();
+}
+
 async function loadRanking(){
-  $('rank-vendedores').innerHTML='<div class="placeholder">Carregando…</div>';
-  $('rank-lojas').innerHTML='<div class="placeholder">Carregando…</div>';
-  $('rank-modelos').innerHTML='<div class="placeholder">Carregando…</div>';
+  ['rank-vendedores','rank-lojas','rank-modelos','rank-dias'].forEach(function(id){
+    $(id).innerHTML='<div class="placeholder">Carregando…</div>';
+  });
+  $('rank-totais').innerHTML='';
   try{
-    // Busca vendas + firm orders juntas para ranking completo
     const [vendas, fos] = await Promise.all([
       db.select(T_VENDAS,'?order=data.desc'),
-      db.select('firm_orders','?order=criado.desc'),
+      db.select(T_FO,'?order=criado.desc'),
     ]);
-    const todas=[...(vendas||[]),...(fos||[])].filter(r=>!r.loja||!r.loja.startsWith('[CANCELADO]'));
-    renderRanking(todas);
+    var de  = $('rank-de').value  ? new Date($('rank-de').value  + 'T00:00:00') : null;
+    var ate = $('rank-ate').value ? new Date($('rank-ate').value + 'T23:59:59') : null;
+
+    function inRange(iso){
+      if(!iso) return true;
+      var d = new Date(iso);
+      if(de  && d < de)  return false;
+      if(ate && d > ate) return false;
+      return true;
+    }
+
+    var todasVendas = (vendas||[]).filter(function(r){
+      return !r.loja||!r.loja.startsWith('[CANCELADO]');
+    }).filter(function(r){ return inRange(r.data); });
+
+    var todasFO = (fos||[]).filter(function(r){ return inRange(r.criado); });
+    var todas = todasVendas.concat(todasFO);
+
+    // Totalizador
+    var totalVnd = todasVendas.length;
+    var totalFO  = todasFO.length;
+    $('rank-totais').innerHTML =
+      '<div class="stat-card"><b style="color:var(--blue)">'+(totalVnd+totalFO)+'</b>total no período</div>'+
+      '<div class="stat-card"><b style="color:var(--green)">'+totalVnd+'</b>vendas do estoque</div>'+
+      '<div class="stat-card"><b style="color:var(--amber)">'+totalFO+'</b>vendas sem estoque</div>';
+
+    renderRanking(todas, todasVendas);
   }catch(e){
     $('rank-vendedores').innerHTML='<div class="placeholder">Erro ao carregar.</div>';
-    $('rank-lojas').innerHTML='';$('rank-modelos').innerHTML='';
+    console.error(e);
   }
 }
 
-function renderRanking(data){
+function renderRanking(todas, vendasEstoque){
   // Por vendedor
-  const byVnd={};
-  data.forEach(r=>{const k=r.vendedor||'—';byVnd[k]=(byVnd[k]||0)+1});
+  var byVnd={};
+  todas.forEach(function(r){var k=r.vendedor||'—';byVnd[k]=(byVnd[k]||0)+1;});
   renderRankList('rank-vendedores',byVnd,'venda');
 
   // Por loja
-  const byLoja={};
-  data.forEach(r=>{const k=(r.loja||'—').replace('[CANCELADO] ','');byLoja[k]=(byLoja[k]||0)+1});
+  var byLoja={};
+  todas.forEach(function(r){var k=(r.loja||'—').replace('[CANCELADO] ','');byLoja[k]=(byLoja[k]||0)+1;});
   renderRankList('rank-lojas',byLoja,'venda');
 
   // Por marca+modelo
-  const byMod={};
-  data.forEach(r=>{
-    const k=(r.marca||'—')+' · '+(r.modelo||'—');
-    byMod[k]=(byMod[k]||0)+1;
-  });
+  var byMod={};
+  todas.forEach(function(r){var k=(r.marca||'—')+' · '+(r.modelo||'—');byMod[k]=(byMod[k]||0)+1;});
   renderRankList('rank-modelos',byMod,'venda',true);
+
+  // Por dia
+  var byDia={};
+  todas.forEach(function(r){
+    var iso=r.data||r.criado;
+    if(!iso) return;
+    var dia=iso.substring(0,10); // YYYY-MM-DD
+    byDia[dia]=(byDia[dia]||0)+1;
+  });
+  // Sort by date desc
+  var diasSorted=Object.entries(byDia).sort(function(a,b){return b[0]<a[0]?-1:1;});
+  renderDias('rank-dias', diasSorted);
 }
 
-function renderRankList(elId,obj,unit,wide=false){
-  const sorted=Object.entries(obj).sort((a,b)=>b[1]-a[1]).slice(0,wide?15:10);
-  if(!sorted.length){$(elId).innerHTML='<div class="placeholder">Sem dados.</div>';return}
-  const max=sorted[0][1];
-  const medals=['🥇','🥈','🥉'];
-  const posClass=['gold','silver','bronze'];
-  $(elId).innerHTML=sorted.map(([name,count],i)=>`
-    <div class="rank-row">
-      <div class="rank-pos ${posClass[i]||''}">${medals[i]||i+1}</div>
-      <div class="rank-name">${name}<br><span class="rank-sub">${count} ${unit}${count>1?'s':''}</span></div>
-      <div class="rank-bar-wrap"><div class="rank-bar" style="width:${Math.round(count/max*100)}%"></div></div>
-      <div class="rank-count">${count}</div>
-    </div>`).join('');
+function renderDias(elId, sorted){
+  if(!sorted.length){$(elId).innerHTML='<div class="placeholder">Sem dados.</div>';return;}
+  var max=sorted.reduce(function(m,e){return Math.max(m,e[1]);},0);
+  $(elId).innerHTML=sorted.map(function(entry,i){
+    var dia=entry[0], count=entry[1];
+    var dateFmt=new Date(dia+'T12:00:00').toLocaleDateString('pt-BR',{weekday:'short',day:'2-digit',month:'2-digit',year:'numeric'});
+    var pct=Math.round(count/max*100);
+    return '<div class="rank-row">'+
+      '<div class="rank-pos '+(i<3?['gold','silver','bronze'][i]:'')+'">'+(i+1)+'</div>'+
+      '<div class="rank-name">'+dateFmt+'<br><span class="rank-sub">'+count+' venda'+(count>1?'s':'')+'</span></div>'+
+      '<div class="rank-bar-wrap"><div class="rank-bar" style="width:'+pct+'%"></div></div>'+
+      '<div class="rank-count">'+count+'</div>'+
+    '</div>';
+  }).join('');
 }
 
+function renderRankList(elId,obj,unit,wide){
+  var sorted=Object.entries(obj).sort(function(a,b){return b[1]-a[1];}).slice(0,wide?15:10);
+  if(!sorted.length){$(elId).innerHTML='<div class="placeholder">Sem dados.</div>';return;}
+  var max=sorted[0][1];
+  var medals=['🥇','🥈','🥉'];
+  var posClass=['gold','silver','bronze'];
+  $(elId).innerHTML=sorted.map(function(entry,i){
+    var name=entry[0],count=entry[1];
+    return '<div class="rank-row">'+
+      '<div class="rank-pos '+(posClass[i]||'')+'">'+( medals[i]||i+1)+'</div>'+
+      '<div class="rank-name">'+name+'<br><span class="rank-sub">'+count+' '+unit+(count>1?'s':'')+'</span></div>'+
+      '<div class="rank-bar-wrap"><div class="rank-bar" style="width:'+Math.round(count/max*100)+'%"></div></div>'+
+      '<div class="rank-count">'+count+'</div>'+
+    '</div>';
+  }).join('');
+}
 // ── FIRM ORDER ────────────────────────────────────────────
 let foAll=[];
 const T_FO='firm_orders';
