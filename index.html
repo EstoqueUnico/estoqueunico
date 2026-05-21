@@ -1376,37 +1376,42 @@ function downloadTemplate(){
 }
 
 function previewImport(input){
-  const file=input.files[0];
+  var file=input.files[0];
   if(!file) return;
-  const reader=new FileReader();
+  var reader=new FileReader();
   reader.onload=function(e){
-    const text=e.target.result;
-    const lines=text.split('\n').filter(l=>l.trim());
-    const header=lines[0].split(',').map(h=>h.trim().toLowerCase().replace(/"/g,''));
-    const required=['marca','modelo','chassi'];
-    const missing=required.filter(r=>!header.includes(r));
+    var text=e.target.result;
+    if(text.charCodeAt(0)===0xFEFF) text=text.slice(1);
+    var lines=text.split('\n').map(function(l){return l.replace('\r','');}).filter(function(l){return l.trim();});
+    var firstLine=lines[0];
+    var sep=(firstLine.split(';').length > firstLine.split(',').length) ? ';' : ',';
+    var header=firstLine.split(sep).map(function(h){
+      return h.trim().toLowerCase().replace(/"/g,'').replace(/ /g,'_');
+    });
+    var required=['marca','modelo','chassi'];
+    var missing=required.filter(function(r){return header.indexOf(r)===-1;});
     if(missing.length){
       toast('Colunas ausentes no CSV: '+missing.join(', '),'err');
       $('import-preview').style.display='none'; return;
     }
     importData=[];
-    for(let i=1;i<lines.length;i++){
-      const vals=lines[i].split(',').map(v=>v.trim().replace(/^"|"$/g,''));
-      if(vals.every(v=>!v)) continue;
-      const row={};
-      header.forEach((h,idx)=>{ row[h]=vals[idx]||''; });
+    for(var i=1;i<lines.length;i++){
+      var vals=lines[i].split(sep).map(function(v){return v.trim().replace(/^"|"$/g,'');});
+      if(vals.every(function(v){return !v;})) continue;
+      var row={};
+      header.forEach(function(h,idx){row[h]=vals[idx]||'';});
+      if(row.preco) row.preco=String(row.preco).replace(',','.');
       row.status='disponivel';
       importData.push(row);
     }
     $('import-preview-info').innerHTML=
-      `<strong>${importData.length} veículos</strong> encontrados no arquivo <strong>${file.name}</strong>.<br>
-       Clique em "Substituir estoque" para continuar.`;
+      '<strong>'+importData.length+' veículos</strong> encontrados em <strong>'+file.name+'</strong> (separador: "'+sep+'").<br>'+
+      'Clique em "Substituir estoque" para continuar.';
     $('import-preview').style.display='block';
     $('import-progress').style.display='none';
   };
   reader.readAsText(file,'UTF-8');
 }
-
 async function confirmarImport(){
   if(!importData.length){ toast('Nenhum dado para importar.','err'); return; }
   if(!confirm(`Isso vai substituir TODOS os veículos disponíveis do estoque por ${importData.length} veículos do arquivo.\n\nVeículos reservados e vendidos serão preservados.\n\nConfirmar?`)) return;
